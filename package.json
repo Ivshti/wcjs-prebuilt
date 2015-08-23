@@ -11,7 +11,8 @@
     "url": "http://github.com/Ivshti/wcjs-prebuilt"
   },
   "scripts": {
-    "postinstall": "node install.js"
+    "postinstall": "node install.js",
+    "cache-clean": "rm -rf WebChimera.js.node vlc lib libvlc.dll libvlccore.dll plugins"
   },
   "keywords": [
     "webchimera",

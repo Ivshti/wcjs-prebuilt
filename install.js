@@ -1,6 +1,7 @@
 var tar = require("tar-fs");
 var gunzip = require("gunzip-maybe");
 var needle = require("needle");
+var fs = require("fs");
 
 // platform:arch
 var vlc = {
@@ -27,7 +28,28 @@ var webchimera = {
 var platform = process.env.PLATFORM || process.platform;
 var arch = process.env.ARCH || process.arch;
 
-if (! vlc[platform+":"+arch]) throw "VLC build not found for "+platform+":"+arch;
-if (! webchimera.electron[platform+":"+arch]) throw "WebChimera.js build not found for "+platform+":"+arch;
+var bundle = vlc[platform+":"+arch],
+	wcjs = webchimera.electron[platform+":"+arch];
 
-//tar.extract(instPath, { });
+if (! bundle) throw "VLC build not found for "+platform+":"+arch;
+if (! wcjs) throw "WebChimera.js build not found for "+platform+":"+arch;
+
+var opts = {
+	open_timeout: 20*1000,
+	follow_max: 3,
+}
+
+console.log("Installing VLC bundle from "+bundle);
+needle.get(bundle, opts).on("error", onerr).pipe(gunzip()).pipe(tar.extract(".")).on("error", onerr).on("finish", function() {
+	console.log("VLC bundle installed");
+});
+
+console.log("Installing WebChimera.js.node from "+wcjs);
+needle.get(wcjs, opts).on("error", onerr).pipe(gunzip()).on("error", onerr).pipe(fs.createWriteStream("./WebChimera.js.node")).on("finish", function() {
+	console.log("WebChimera.js.node installed");
+});
+
+function onerr(err)
+{
+	throw err;
+}
