@@ -1,0 +1,25 @@
+{
+  "name": "wcjs-prebuilt",
+  "version": "1.0.0",
+  "description": "Install WebChimera.js pre-built binaries via npm",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/Ivshti/wcjs-prebuilt"
+  },
+  "keywords": [
+    "webchimera",
+    "webchimera.js",
+    "vlc",
+    "prebuilt"
+  ],
+  "author": "Ivo Georgiev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Ivshti/wcjs-prebuilt/issues"
+  },
+  "homepage": "https://github.com/Ivshti/wcjs-prebuilt"
+}
