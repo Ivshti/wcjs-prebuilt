@@ -21,3 +21,10 @@ ARCH=x86 PLATFORM=linux npm install wcjs-prebuilt
 ```
 
 In terms of runtimes, wcjs-prebuilt only supports **Electron**. Expect packages for nwjs and node.js in the future (PRs / forks would be appreciated).
+
+
+## Programmatic usage
+```javascript
+var wcjs = require("wcjs-prebuilt");
+// wcjs is WebChimera.js
+```
