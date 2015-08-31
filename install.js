@@ -11,11 +11,16 @@ var vlc = {
 };
 
 // TODO: those URLs are temporary, use CI artifacts to download WebChimera.js
+var electron44 = {
+	"darwin:x64": "https://github.com/Ivshti/vlc-prebuilt/raw/master/wcjs-darwin-x64-0.1.17.gz",
+	"linux:x64": "https://github.com/Ivshti/vlc-prebuilt/raw/master/wcjs-linux-x64-0.1.17.gz",
+	"win32:ia32": "https://github.com/Ivshti/vlc-prebuilt/raw/master/wcjs-win-ia32-0.1.17.gz"
+};
 var webchimera = {
-	electron: {
-		"darwin:x64": "https://github.com/Ivshti/vlc-prebuilt/raw/master/wcjs-darwin-x64-0.1.17.gz",
-		"linux:x64": "https://github.com/Ivshti/vlc-prebuilt/raw/master/wcjs-linux-x64-0.1.17.gz",
-		"win32:ia32": "https://github.com/Ivshti/vlc-prebuilt/raw/master/wcjs-win-ia32-0.1.17.gz"
+	electron: electron44,
+	"electron44": electron44,
+	"electron45": { 
+
 	},
 	nwjs: {
 

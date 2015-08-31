@@ -29,6 +29,7 @@
   "dependencies": {
     "gunzip-maybe": "^1.2.1",
     "needle": "^0.10.0",
-    "tar-fs": "^1.8.1"
+    "tar-fs": "^1.8.1",
+    "unzip": "0.1.x"
   }
 }
