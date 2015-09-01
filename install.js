@@ -39,7 +39,8 @@ var arch = process.env.ARCH || process.arch;
 
 var runtime = "electron";
 try {
-	var manifest = require(path.join(process.cwd(), "package.json"))
+	// WARNING: this currently reads in our dear, so it's useless
+	var manifest = require(path.join(process.cwd(), "package.json"));
 	if (manifest.main.match("html$")) { console.log("nw.js runtime auto-detected"); runtime = "nwjs"; }
 } catch(e) { };
 if (process.env.RUNTIME) {
