@@ -18,6 +18,9 @@ var electron44 = {
 	"win32:ia32": "https://github.com/RSATom/WebChimera.js/releases/download/v.0.1.28/WebChimera.js_electron_0.29.2_win.zip",
 	"linux:x64": "https://github.com/Ivshti/vlc-prebuilt/raw/master/wcjs-linux-x64-0.1.17.gz",
 };
+
+// TODO: use https://api.github.com/repos/RSATom/WebChimera.js/releases/latest or just some hardcoded version to generate the links
+// needle.get("https://api.github.com/repos/RSATom/WebChimera.js/releases/latest", { json: true })
 var webchimera = {
 	electron: electron44,
 	"electron44": electron44,
