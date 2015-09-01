@@ -36,8 +36,15 @@ var webchimera = {
 var platform = process.env.PLATFORM || process.platform;
 var arch = process.env.ARCH || process.arch;
 
+var runtime = "electron";
+if (process.env.RUNTIME) {
+	if (webchimera[process.env.RUNTIME]) runtime = process.env.RUNTIME;
+	else throw "supported runtimes: "+Object.keys(webchimera).join(", ");
+}
+console.log("Using runtime: "+runtime);
+
 var bundle = vlc[platform+":"+arch],
-	wcjs = webchimera.electron[platform+":"+arch];
+	wcjs = webchimera[runtime][platform+":"+arch];
 
 if (! bundle) throw "VLC build not found for "+platform+":"+arch;
 if (! wcjs) throw "WebChimera.js build not found for "+platform+":"+arch;
