@@ -37,8 +37,8 @@ var webchimera = {
 	}
 };
 
-var platform = process.env.PLATFORM || process.platform;
-var arch = process.env.ARCH || process.arch;
+var platform = process.env.WCJS_PLATFORM || process.platform;
+var arch = process.env.WCJS_ARCH || process.arch;
 
 var runtime = "electron";
 try {
@@ -46,8 +46,8 @@ try {
 	var manifest = require(path.join(process.cwd(), "package.json"));
 	if (manifest.main.match("html$")) { console.log("nw.js runtime auto-detected"); runtime = "nwjs"; }
 } catch(e) { };
-if (process.env.RUNTIME) {
-	if (webchimera[process.env.RUNTIME]) runtime = process.env.RUNTIME;
+if (process.env.WCJS_RUNTIME) {
+	if (webchimera[process.env.WCJS_RUNTIME]) runtime = process.env.WCJS_RUNTIME;
 	else throw "supported runtimes: "+Object.keys(webchimera).join(", ");
 }
 console.log("Using runtime: "+runtime);

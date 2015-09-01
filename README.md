@@ -13,11 +13,11 @@ WebChimera.js is a node.js binding to libvlc. You can use it to play video using
 npm install wcjs-prebuilt
 ```
 
-You can install the module for another platform than the one you're running - for example if you want to package your application for another OS. To do that, use the ``PLATFORM``, ``ARCH`` environment variables.
+You can install the module for another platform than the one you're running - for example if you want to package your application for another OS. To do that, use the ``WCJS_PLATFORM``, ``WCJS_ARCH`` environment variables.
 
 For example, to install for Windows under any OS, use
 ```
-PLATFORM=win32 ARCH=ia32 npm install wcjs-prebuilt
+WCJS_PLATFORM=win32 WCJS_ARCH=ia32 npm install wcjs-prebuilt
 ```
 
 In terms of runtimes, wcjs-prebuilt only supports **Electron**. Expect packages for nwjs and node.js in the future (PRs / forks would be appreciated).
