@@ -1,6 +1,6 @@
 {
   "name": "wcjs-prebuilt",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Install WebChimera.js pre-built binaries via npm",
   "main": "index.js",
   "scripts": {
