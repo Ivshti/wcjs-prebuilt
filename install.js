@@ -2,6 +2,7 @@ var tar = require("tar-fs");
 var gunzip = require("gunzip-maybe");
 var needle = require("needle");
 var fs = require("fs");
+var unzip = require("unzip");
 
 // platform:arch
 var vlc = {
@@ -12,18 +13,20 @@ var vlc = {
 
 // TODO: those URLs are temporary, use CI artifacts to download WebChimera.js
 var electron44 = {
-	"darwin:x64": "https://github.com/Ivshti/vlc-prebuilt/raw/master/wcjs-darwin-x64-0.1.17.gz",
+	"darwin:x64": "https://github.com/RSATom/WebChimera.js/releases/download/v.0.1.28/WebChimera.js_electron_0.29.2_mac.zip",
+	"win32:ia32": "https://github.com/RSATom/WebChimera.js/releases/download/v.0.1.28/WebChimera.js_electron_0.29.2_win.zip",
 	"linux:x64": "https://github.com/Ivshti/vlc-prebuilt/raw/master/wcjs-linux-x64-0.1.17.gz",
-	"win32:ia32": "https://github.com/Ivshti/vlc-prebuilt/raw/master/wcjs-win-ia32-0.1.17.gz"
 };
 var webchimera = {
 	electron: electron44,
 	"electron44": electron44,
 	"electron45": { 
-
+		"darwin:x64": "https://github.com/RSATom/WebChimera.js/releases/download/v.0.1.28/WebChimera.js_electron_0.31.1_mac.zip",
+		"win32:ia32": "https://github.com/RSATom/WebChimera.js/releases/download/v.0.1.28/WebChimera.js_electron_0.31.1_win.zip"
 	},
 	nwjs: {
-
+		"win32:ia32": "https://github.com/RSATom/WebChimera.js/releases/download/v.0.1.28/WebChimera.js_nw_0.12.3_win.zip",
+		"darwin:x64": "https://github.com/RSATom/WebChimera.js/releases/download/v.0.1.28/WebChimera.js_nw_0.12.3_mac.zip",
 	},
 	node: {
 
@@ -50,9 +53,16 @@ needle.get(bundle, opts).on("error", onerr).pipe(gunzip()).pipe(tar.extract(".")
 });
 
 console.log("Installing WebChimera.js.node from "+wcjs);
-needle.get(wcjs, opts).on("error", onerr).pipe(gunzip()).on("error", onerr).pipe(fs.createWriteStream("./WebChimera.js.node")).on("finish", function() {
-	console.log("WebChimera.js.node installed");
-});
+(function(next) {
+	var wcjsPipe =  needle.get(wcjs, opts).on("error", onerr);
+	if (wcjs.match("zip")) wcjsPipe.pipe(unzip.Parse()).on("entry", function(entry) { next(entry) });
+	else next(wcjsPipe);
+})(function(wcjsPipe) {
+	wcjsPipe.pipe(fs.createWriteStream("./WebChimera.js.node")).on("finish", function() {
+		console.log("WebChimera.js.node installed");
+	});
+})
+
 
 function onerr(err)
 {
