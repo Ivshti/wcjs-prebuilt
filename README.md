@@ -20,8 +20,10 @@ For example, to install for Windows under any OS, use
 WCJS_PLATFORM=win32 WCJS_ARCH=ia32 npm install wcjs-prebuilt
 ```
 
-In terms of runtimes, wcjs-prebuilt only supports **Electron**. Expect packages for nwjs and node.js in the future (PRs / forks would be appreciated).
-
+Currently supported runtimes are:
+* ``electron`` / ``electron44`` - Electron 0.29.x, based on chromium 44
+* ``electron45`` - electron 0.31.x, based on chromium 45
+* ``nwjs`` - latest NW.js
 
 ## Programmatic usage
 ```javascript
