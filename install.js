@@ -13,7 +13,7 @@ var vlc = {
 };
 
 // TODO: those URLs are temporary, use CI artifacts to download WebChimera.js
-var WCJS_VERSION = "v0.1.29";
+var WCJS_VERSION = process.env.WCJS_VERSION || "v0.1.29";
 var electron44 = {
 	"darwin:x64": "https://github.com/RSATom/WebChimera.js/releases/download/"+WCJS_VERSION+"/WebChimera.js_electron_0.29.2_x64_osx.zip",
 	"win32:ia32": "https://github.com/RSATom/WebChimera.js/releases/download/"+WCJS_VERSION+"/WebChimera.js_electron_0.29.2_ia32_win.zip",
