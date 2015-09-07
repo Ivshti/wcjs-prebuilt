@@ -14,6 +14,7 @@ npm install wcjs-prebuilt
 ```
 
 You can install the module for another platform than the one you're running - for example if you want to package your application for another OS. To do that, use the ``WCJS_PLATFORM``, ``WCJS_ARCH`` environment variables.
+You can also tweak WebChimera.js version through ``WCJS_VERSION``.
 
 For example, to install for Windows under any OS, use
 ```
