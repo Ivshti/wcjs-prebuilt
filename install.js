@@ -13,10 +13,11 @@ var vlc = {
 };
 
 // TODO: those URLs are temporary, use CI artifacts to download WebChimera.js
+var WCJS_VERSION = "v0.1.29";
 var electron44 = {
-	"darwin:x64": "https://github.com/RSATom/WebChimera.js/releases/download/v.0.1.28/WebChimera.js_electron_0.29.2_mac.zip",
-	"win32:ia32": "https://github.com/RSATom/WebChimera.js/releases/download/v.0.1.28/WebChimera.js_electron_0.29.2_win.zip",
-	"linux:x64": "https://github.com/Ivshti/vlc-prebuilt/raw/master/wcjs-linux-x64-0.1.17.gz",
+	"darwin:x64": "https://github.com/RSATom/WebChimera.js/releases/download/"+WCJS_VERSION+"/WebChimera.js_electron_0.29.2_x64_osx.zip",
+	"win32:ia32": "https://github.com/RSATom/WebChimera.js/releases/download/"+WCJS_VERSION+"/WebChimera.js_electron_0.29.2_ia32_win.zip",
+	"linux:x64": "https://github.com/RSATom/WebChimera.js/releases/download/"+WCJS_VERSION+"/WebChimera.js_electron_0.29.2_x64_linux.zip",
 };
 
 // TODO: use https://api.github.com/repos/RSATom/WebChimera.js/releases/latest or just some hardcoded version to generate the links
@@ -25,12 +26,14 @@ var webchimera = {
 	electron: electron44,
 	"electron44": electron44,
 	"electron45": { 
-		"darwin:x64": "https://github.com/RSATom/WebChimera.js/releases/download/v.0.1.28/WebChimera.js_electron_0.31.1_mac.zip",
-		"win32:ia32": "https://github.com/RSATom/WebChimera.js/releases/download/v.0.1.28/WebChimera.js_electron_0.31.1_win.zip"
+		"darwin:x64": "https://github.com/RSATom/WebChimera.js/releases/download/"+WCJS_VERSION+"/WebChimera.js_electron_0.31.2_x64_osx.zip",
+		"win32:ia32": "https://github.com/RSATom/WebChimera.js/releases/download/"+WCJS_VERSION+"/WebChimera.js_electron_0.31.2_ia32_win.zip",
+		"linux:x64": "https://github.com/RSATom/WebChimera.js/releases/download/"+WCJS_VERSION+"/WebChimera.js_electron_0.31.2_x64_linux.zip",
 	},
 	nwjs: {
-		"win32:ia32": "https://github.com/RSATom/WebChimera.js/releases/download/v.0.1.28/WebChimera.js_nw_0.12.3_win.zip",
-		"darwin:x64": "https://github.com/RSATom/WebChimera.js/releases/download/v.0.1.28/WebChimera.js_nw_0.12.3_mac.zip",
+		"darwin:x64": "https://github.com/RSATom/WebChimera.js/releases/download/"+WCJS_VERSION+"/WebChimera.js_nw_0.12.3_x64_osx.zip",
+		"win32:ia32": "https://github.com/RSATom/WebChimera.js/releases/download/"+WCJS_VERSION+"/WebChimera.js_nw_0.12.3_ia32_win.zip",
+		"linux:x64": "https://github.com/RSATom/WebChimera.js/releases/download/"+WCJS_VERSION+"/WebChimera.js_nw_0.12.3_x64_linux.zip",
 	},
 	node: {
 
