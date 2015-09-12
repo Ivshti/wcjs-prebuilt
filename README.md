@@ -31,3 +31,8 @@ Currently supported runtimes are:
 var wcjs = require("wcjs-prebuilt");
 // wcjs is WebChimera.js
 ```
+
+## Used in
+* [Stremio](www.strem.io)
+
+(please PR other use cases)
