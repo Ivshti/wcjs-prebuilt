@@ -1,13 +1,15 @@
-var Promise = require('bluebird');
 var fs = require('fs');
 var path = require('path');
+var Promise = require('bluebird');
+var needle = require('needle');
 var downloader = require('./lib/downloader');
 
 var supported = {
     runtimes: ['nw.js', 'electron'],
-    platform: ['darwin', 'win32', 'win64', 'linux'],
+    platforms: ['darwin', 'win32', 'win64', 'linux'],
     arch: ['ia32', 'x64'] //meh why not 
 }
+
 
 var urls = {
     vlc: {
@@ -19,12 +21,26 @@ var urls = {
 
 
 function getDownloadUrls(data) {
+    console.log(data)
+    return new Promise(function(resolve, reject) {
+        needle.get('https://api.github.com/repos/RSATom/WebChimera.js/releases/latest', {
+            json: true
+        }, function(err, resp) {
+            if (err || !resp.body.assets)
+                return reject('something went Very Wong:' + (err || "no assets!?!?!"));
 
-    needle.get('https://api.github.com/repos/RSATom/WebChimera.js/releases/latest', {
-        json: true
-    }, function(err, resp) {
-        console.log(resp)
-    });
+            resp.body.assets.forEach(function(entry) {
+                var filename = path.parse(entry.name).name;
+                console.log(filename)
+            });
+
+
+
+        });
+
+
+
+    })
 }
 
 
@@ -44,8 +60,8 @@ function parseEnv() {
             }
         } catch (e) {};
 
-        if (!supported.runtimes[runtime] || !supported.platforms[platform] || !supported.arch[arch])
-            reject('unsupported runtime/arch/platform');
+        if (!supported.runtimes.indexOf(runtime) || !supported.platforms.indexOf(platform) || !supported.arch.indexOf(arch))
+            reject('Unsupported runtime/arch/platform');
         else
             resolve({
                 platform: platform,
@@ -57,5 +73,10 @@ function parseEnv() {
 }
 
 
+
+
 parseEnv()
     .then(getDownloadUrls)
+    .catch(function(e) {
+        console.log(e)
+    })
