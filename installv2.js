@@ -32,7 +32,6 @@ function getDownloadUrls(data) {
                 if (json.message && json.message === 'Not Found')
                     return reject('Version Tag Not Found')
 
-
                 var availableVersions = [];
 
                 _.remove(json.assets, function(asset) {
@@ -41,14 +40,14 @@ function getDownloadUrls(data) {
                 }).forEach(function(entry) {
                     availableVersions.push(path.parse(entry.name).name.split('_')[2])
                 });
-                if (data.runtimeVersion === 'latest')
-                    var downloadVersion = Math.max(availableVersions)
 
 
+                //if (data.runtimeVersion === 'latest')
 
+
+                console.log(availableVersions)
             })
             .catch(reject)
-
     });
 }
 
@@ -103,7 +102,6 @@ function getJson(url) {
         });
     })
 }
-
 parseEnv()
     .then(getDownloadUrls)
     .catch(function(e) {
