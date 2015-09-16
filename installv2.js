@@ -2,20 +2,21 @@ var fs = require('fs');
 var path = require('path');
 var Promise = require('bluebird');
 var needle = require('needle');
+var _ = require('lodash');
 var downloader = require('./lib/downloader');
 
 var supported = {
     runtimes: ['nw.js', 'electron'],
-    platforms: ['darwin', 'win32', 'win64', 'linux'],
+    platforms: ['osx', 'win', 'linux'],
     arch: ['ia32', 'x64'] //meh why not 
 }
 
 
 var urls = {
     vlc: {
-        "darwin:x64": "https://github.com/Ivshti/vlc-prebuilt/raw/master/vlc-2.2-darwin.tar.gz",
+        "osx:x64": "https://github.com/Ivshti/vlc-prebuilt/raw/master/vlc-2.2-darwin.tar.gz",
         "linux:x64": "https://github.com/Ivshti/vlc-prebuilt/raw/master/vlc-2.2-linux.tar.gz",
-        "win32:ia32": "https://github.com/Ivshti/vlc-prebuilt/raw/master/vlc-2.2-win32.tar.gz",
+        "win:ia32": "https://github.com/Ivshti/vlc-prebuilt/raw/master/vlc-2.2-win32.tar.gz",
     }
 }
 
@@ -23,25 +24,34 @@ var urls = {
 function getDownloadUrls(data) {
     console.log(data)
     return new Promise(function(resolve, reject) {
-        needle.get('https://api.github.com/repos/RSATom/WebChimera.js/releases/latest', {
-            json: true
-        }, function(err, resp) {
-            if (err || !resp.body.assets)
-                return reject('something went Very Wong:' + (err || "no assets!?!?!"));
+        if (data.version !== 'latest')
+            var url = 'https://api.github.com/repos/RSATom/WebChimera.js/releases/tags/' + data.version;
 
-            resp.body.assets.forEach(function(entry) {
-                var filename = path.parse(entry.name).name;
-                console.log(filename)
-            });
+        getJson('https://api.github.com/repos/RSATom/WebChimera.js/releases/latest' || url)
+            .then(function(json) {
+                if (json.message && json.message === 'Not Found')
+                    return reject('Version Tag Not Found')
 
 
+                var availableVersions = [];
 
-        });
+                _.remove(json.assets, function(asset) {
+                    asset = path.parse(asset.name).name.split('_');
+                    return (asset[1] === data.runtime && asset[3] === data.arch && asset[4] === data.platform); //remove all that are not for our runtime & arch.
+                }).forEach(function(entry) {
+                    availableVersions.push(path.parse(entry.name).name.split('_')[2])
+                });
+                if (data.runtimeVersion === 'latest')
+                    var downloadVersion = Math.max(availableVersions)
 
 
 
-    })
+            })
+            .catch(reject)
+
+    });
 }
+
 
 
 function parseEnv() {
@@ -49,7 +59,14 @@ function parseEnv() {
 
         var platform = process.env.WCJS_PLATFORM || process.platform;
         var arch = process.env.WCJS_ARCH || process.arch;
+        var version = process.env.WCJS_VERSION || 'v0.1.30';
         var runtime = process.env.WCJS_RUNTIME || "electron";
+        var runtimeVersion = process.env.WCJS_RUNTIME_VERSION || 'latest';
+
+        if (/^win/.test(platform))
+            platform = 'win';
+        else if (platform === 'darwin')
+            platform = 'osx'
 
         try {
             // WARNING: this currently reads in our dear, so it's useless
@@ -66,6 +83,8 @@ function parseEnv() {
             resolve({
                 platform: platform,
                 arch: arch,
+                runtimeVersion: runtimeVersion,
+                version: version,
                 runtime: runtime
             });
     });
@@ -73,7 +92,17 @@ function parseEnv() {
 }
 
 
-
+function getJson(url) {
+    return new Promise(function(resolve, reject) {
+        needle.get(url, {
+            json: true
+        }, function(err, resp) {
+            if (err || !resp.body)
+                return reject('something went Very Wong:' + (err || "no body!?!?!"));
+            resolve(resp.body)
+        });
+    })
+}
 
 parseEnv()
     .then(getDownloadUrls)
