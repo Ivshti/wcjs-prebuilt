@@ -4,15 +4,11 @@ var Promise = require('bluebird');
 var needle = require('needle');
 var _ = require('lodash');
 var downloader = require('./lib/downloader');
+var findProjectRoot = require('find-project-root');
 
-
-var supported = {
-    runtimes: ['nw.js', 'electron'],
-    platforms: ['osx', 'win', 'linux'],
-    arch: ['ia32', 'x64'] //meh why not 
-}
-
-
+var rootdir = findProjectRoot(process.cwd(), {
+    maxDepth: 12
+});
 
 function getWCJS(data) {
     return new Promise(function(resolve, reject) {
@@ -25,19 +21,24 @@ function getWCJS(data) {
                 if (json.message && json.message === 'Not Found')
                     return reject('Version Tag Not Found')
 
+                var downloadName = json.name;
+
                 var availableVersions = [];
 
                 _.remove(json.assets, function(asset) {
                     asset = path.parse(asset.name).name.split('_');
+                    if (asset[1] === 'nw')
+                        asset[1] = 'nw.js'
                     return (asset[1] === data.runtime && asset[3] === data.arch && asset[4] === data.platform); //remove all that are not for our runtime/arch/os.
                 }).forEach(function(entry) {
+
                     availableVersions.push({
                         version: path.parse(entry.name).name.split('_')[2],
                         download: entry.browser_download_url
                     })
                 });
                 if (data.runtimeVersion === 'latest') {
-                    console.log('Retriving WCJS:', _.last(availableVersions).version);
+                    console.log('Retriving', downloadName);
                     downloader.downloadAndUnpack('./', _.last(availableVersions).download)
                         .then(function() {
                             resolve(data);
@@ -49,7 +50,7 @@ function getWCJS(data) {
                         })
                         .pluck('download')
                         .value()[0];
-                    console.log('Retriving WCJS:', version.version);
+                    console.log('Retriving', downloadName, version.version);
                     downloader.downloadAndUnpack('./', downloadUrl)
                         .then(function() {
                             resolve(data);
@@ -93,12 +94,21 @@ function getVLC(data) {
 
 
 function parseEnv() {
+
+    var supported = {
+        runtimes: ['electron', 'nw.js'],
+        platforms: ['osx', 'win', 'linux'],
+        arch: ['ia32', 'x64'] //meh why not 
+    }
+
+
+
     return new Promise(function(resolve, reject) {
 
         var platform = process.env.WCJS_PLATFORM || process.platform;
         var arch = process.env.WCJS_ARCH || process.arch;
         var version = process.env.WCJS_VERSION || 'latest';
-        var runtime = process.env.WCJS_RUNTIME || "electron";
+        var runtime = process.env.WCJS_RUNTIME || 'electron';
         var runtimeVersion = process.env.WCJS_RUNTIME_VERSION || 'latest';
 
         if (/^win/.test(platform))
@@ -108,14 +118,15 @@ function parseEnv() {
 
         try {
             // WARNING: this currently reads in our dear, so it's useless
-            var manifest = require(path.join(process.cwd(), "package.json"));
-            if (manifest.main.match("html$")) {
-                console.log("nw.js runtime auto-detected");
-                runtime = "nw.js";
+            var manifest = require(path.join(rootdir, "package.json"));
+            if (path.parse(manifest.main).ext === '.html') {
+                runtime = 'nw.js';
             }
         } catch (e) {};
 
-        if (!supported.runtimes.indexOf(runtime) || !supported.platforms.indexOf(platform) || !supported.arch.indexOf(arch))
+        console.log('Runtime detected as:', runtime)
+
+        if (!(supported.runtimes.indexOf(runtime) > -1) || !(supported.platforms.indexOf(platform) > -1) || !(supported.arch.indexOf(arch) > -1))
             reject('Unsupported runtime/arch/platform');
         else
             resolve({
@@ -126,7 +137,6 @@ function parseEnv() {
                 runtime: runtime
             });
     });
-
 }
 
 
