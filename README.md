@@ -33,6 +33,7 @@ var wcjs = require("wcjs-prebuilt");
 ```
 
 ## Used in
-* [Stremio](www.strem.io)
+* [Stremio](www.strem.io) - since version 2.0
+* [Popcorn Time][https://popcorntime.io] - not yet released with WebChimera.js, in progress
 
 (please PR other use cases)
