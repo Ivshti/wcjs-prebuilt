@@ -5,6 +5,7 @@ var needle = require('needle');
 var _ = require('lodash');
 var downloader = require('./lib/downloader');
 
+
 var supported = {
     runtimes: ['nw.js', 'electron'],
     platforms: ['osx', 'win', 'linux'],
@@ -12,16 +13,8 @@ var supported = {
 }
 
 
-var urls = {
-    vlc: {
-        "osx:x64": "https://github.com/Ivshti/vlc-prebuilt/raw/master/vlc-2.2-darwin.tar.gz",
-        "linux:x64": "https://github.com/Ivshti/vlc-prebuilt/raw/master/vlc-2.2-linux.tar.gz",
-        "win:ia32": "https://github.com/Ivshti/vlc-prebuilt/raw/master/vlc-2.2-win32.tar.gz",
-    }
-}
 
-
-function getDownloadUrls(data) {
+function getWCJS(data) {
     return new Promise(function(resolve, reject) {
         if (data.version !== 'latest')
             var url = 'https://api.github.com/repos/RSATom/WebChimera.js/releases/tags/' + data.version;
@@ -43,24 +36,60 @@ function getDownloadUrls(data) {
                         download: entry.browser_download_url
                     })
                 });
-                if (data.runtimeVersion === 'latest')
-                    resolve(downloader.downloadAndUnpack('./', _.last(availableVersions).download));
-                else {
+                if (data.runtimeVersion === 'latest') {
+                    console.log('Retriving WCJS:', _.last(availableVersions).version);
+                    downloader.downloadAndUnpack('./', _.last(availableVersions).download)
+                        .then(function() {
+                            resolve(data);
+                        })
+                } else {
                     var downloadUrl = _(availableVersions)
                         .filter(function(version) {
                             return version.version === data.runtimeVersion;
                         })
                         .pluck('download')
                         .value()[0];
-                    resolve(downloader.downloadAndUnpack('./', downloadUrl));
+                    console.log('Retriving WCJS:', version.version);
+                    downloader.downloadAndUnpack('./', downloadUrl)
+                        .then(function() {
+                            resolve(data);
+                        })
                 }
-
-
             })
             .catch(reject)
     });
 }
 
+function getVLC(data) {
+    return new Promise(function(resolve, reject) {
+
+        getJson('https://api.github.com/repos/Ivshti/vlc-prebuilt/releases/latest')
+            .then(function(json) {
+
+                var asset = false;
+                json.assets.forEach(function(entry) {
+                    var targetOS = path.parse(path.parse(entry.name).name).name.split('-');
+
+                    if (/^win/.test(targetOS[2]))
+                        targetOS[2] = 'win';
+
+                    if (targetOS[2] === data.platform)
+                        asset = {
+                            url: entry.browser_download_url,
+                            version: targetOS[1]
+                        }
+                });
+                if (!asset)
+                    return reject('No VLC libs found for this system');
+
+                console.log('Retriving VLC Libs:', asset.version);
+                downloader.downloadAndUnpack('./', asset.url)
+                    .then(resolve)
+
+            })
+            .catch(reject)
+    });
+}
 
 
 function parseEnv() {
@@ -113,7 +142,11 @@ function getJson(url) {
     })
 }
 parseEnv()
-    .then(getDownloadUrls)
+    .then(getWCJS)
+    .then(getVLC)
+    .then(function() {
+        console.log('WCJS & VLC Libs Downloaded');
+    })
     .catch(function(e) {
         console.log(e)
     })
