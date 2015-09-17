@@ -43,10 +43,17 @@ function getDownloadUrls(data) {
                         download: entry.browser_download_url
                     })
                 });
-
-
                 if (data.runtimeVersion === 'latest')
-                    downloader.downloadAndUnpack('./', _.last(availableVersions).download)
+                    resolve(downloader.downloadAndUnpack('./', _.last(availableVersions).download));
+                else {
+                    var downloadUrl = _(availableVersions)
+                        .filter(function(version) {
+                            return version.version === data.runtimeVersion;
+                        })
+                        .pluck('download')
+                        .value()[0];
+                    resolve(downloader.downloadAndUnpack('./', downloadUrl));
+                }
 
 
             })
