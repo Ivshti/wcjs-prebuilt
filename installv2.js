@@ -22,13 +22,13 @@ var urls = {
 
 
 function getDownloadUrls(data) {
-    console.log(data)
     return new Promise(function(resolve, reject) {
         if (data.version !== 'latest')
             var url = 'https://api.github.com/repos/RSATom/WebChimera.js/releases/tags/' + data.version;
 
         getJson('https://api.github.com/repos/RSATom/WebChimera.js/releases/latest' || url)
             .then(function(json) {
+
                 if (json.message && json.message === 'Not Found')
                     return reject('Version Tag Not Found')
 
@@ -36,16 +36,19 @@ function getDownloadUrls(data) {
 
                 _.remove(json.assets, function(asset) {
                     asset = path.parse(asset.name).name.split('_');
-                    return (asset[1] === data.runtime && asset[3] === data.arch && asset[4] === data.platform); //remove all that are not for our runtime & arch.
+                    return (asset[1] === data.runtime && asset[3] === data.arch && asset[4] === data.platform); //remove all that are not for our runtime/arch/os.
                 }).forEach(function(entry) {
-                    availableVersions.push(path.parse(entry.name).name.split('_')[2])
+                    availableVersions.push({
+                        version: path.parse(entry.name).name.split('_')[2],
+                        download: entry.browser_download_url
+                    })
                 });
 
 
-                //if (data.runtimeVersion === 'latest')
+                if (data.runtimeVersion === 'latest')
+                    downloader.downloadAndUnpack('./', _.last(availableVersions).download)
 
 
-                console.log(availableVersions)
             })
             .catch(reject)
     });
@@ -58,7 +61,7 @@ function parseEnv() {
 
         var platform = process.env.WCJS_PLATFORM || process.platform;
         var arch = process.env.WCJS_ARCH || process.arch;
-        var version = process.env.WCJS_VERSION || 'v0.1.30';
+        var version = process.env.WCJS_VERSION || 'latest';
         var runtime = process.env.WCJS_RUNTIME || "electron";
         var runtimeVersion = process.env.WCJS_RUNTIME_VERSION || 'latest';
 
