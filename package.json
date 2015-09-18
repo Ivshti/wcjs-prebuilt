@@ -4,8 +4,8 @@
     "description": "Install WebChimera.js pre-built binaries via npm",
     "main": "index.js",
     "scripts": {
-        "postinstall": "node lib/install.js",
-        "cache-clean": "rm -rf WebChimera.js.node vlc lib libvlc.dll libvlccore.dll plugins"
+        "postinstall": "node installv2.js",
+        "cache-clean": "rm -rf bin"
     },
     "repository": {
         "type": "git",
