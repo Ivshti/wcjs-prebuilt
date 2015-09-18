@@ -39,7 +39,7 @@ function getWCJS(data) {
                 });
                 if (data.runtimeVersion === 'latest') {
                     console.log('Retriving', downloadName);
-                    downloader.downloadAndUnpack('./', _.last(availableVersions).download)
+                    downloader.downloadAndUnpack('./bin', _.last(availableVersions).download)
                         .then(function() {
                             resolve(data);
                         })
@@ -51,7 +51,7 @@ function getWCJS(data) {
                         .pluck('download')
                         .value()[0];
                     console.log('Retriving', downloadName, version.version);
-                    downloader.downloadAndUnpack('./', downloadUrl)
+                    downloader.downloadAndUnpack('./bin', downloadUrl)
                         .then(function() {
                             resolve(data);
                         })
@@ -84,7 +84,7 @@ function getVLC(data) {
                     return reject('No VLC libs found for this system');
 
                 console.log('Retriving VLC Libs:', asset.version);
-                downloader.downloadAndUnpack('./', asset.url)
+                downloader.downloadAndUnpack('./bin', asset.url)
                     .then(resolve)
 
             })

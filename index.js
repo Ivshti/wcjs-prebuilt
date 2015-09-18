@@ -1,1 +1,1 @@
-module.exports = require("./WebChimera.js.node");
+module.exports = require("./bin/WebChimera.js.node");
