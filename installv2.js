@@ -31,31 +31,27 @@ function getWCJS(data) {
                         asset[1] = 'nw.js'
                     return (asset[1] === data.runtime && asset[3] === data.arch && asset[4] === data.platform); //remove all that are not for our runtime/arch/os.
                 }).forEach(function(entry) {
-
                     availableVersions.push({
                         version: path.parse(entry.name).name.split('_')[2],
-                        download: entry.browser_download_url
+                        url: entry.browser_download_url,
+                        name: path.parse(entry.name).name
                     })
                 });
                 if (data.runtimeVersion === 'latest') {
-                    console.log('Retriving', downloadName);
-                    downloader.downloadAndUnpack('./bin', _.last(availableVersions).download)
-                        .then(function() {
-                            resolve(data);
-                        })
+                    var downloadObject = _.last(availableVersions);
                 } else {
-                    var downloadUrl = _(availableVersions)
+                    var downloadObject = _(availableVersions)
                         .filter(function(version) {
                             return version.version === data.runtimeVersion;
-                        })
-                        .pluck('download')
-                        .value()[0];
-                    console.log('Retriving', downloadName, version.version);
-                    downloader.downloadAndUnpack('./bin', downloadUrl)
-                        .then(function() {
-                            resolve(data);
-                        })
+                        });
                 }
+                if (!downloadObject)
+                    return reject('No download candidate availale')
+                console.log('Aquiring:', downloadObject.name);
+                downloader.downloadAndUnpack('./bin', downloadObject.url)
+                    .then(function() {
+                        resolve(data);
+                    });
             })
             .catch(reject)
     });
@@ -72,18 +68,21 @@ function getVLC(data) {
                     var targetOS = path.parse(path.parse(entry.name).name).name.split('-');
 
                     if (/^win/.test(targetOS[2]))
-                        targetOS[2] = 'win';
+                        var platform = 'win';
+                    else
+                        var platform = targetOS[2]
 
-                    if (targetOS[2] === data.platform)
+                    if (platform === data.platform)
                         asset = {
                             url: entry.browser_download_url,
-                            version: targetOS[1]
+                            version: targetOS[1],
+                            platform: targetOS[2]
                         }
                 });
                 if (!asset)
                     return reject('No VLC libs found for this system');
 
-                console.log('Retriving VLC Libs:', asset.version);
+                console.log('Retriving VLC Libs:', asset.version, asset.platform);
                 downloader.downloadAndUnpack('./bin', asset.url)
                     .then(resolve)
 
