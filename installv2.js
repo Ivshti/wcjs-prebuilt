@@ -123,7 +123,7 @@ function parseEnv() {
             }
         } catch (e) {};
 
-        console.log('Runtime detected as:', runtime)
+        console.log('Runtime detected as:', runtime, '\nArch:', arch)
 
         if (!(supported.runtimes.indexOf(runtime) > -1) || !(supported.platforms.indexOf(platform) > -1) || !(supported.arch.indexOf(arch) > -1))
             reject('Unsupported runtime/arch/platform');
