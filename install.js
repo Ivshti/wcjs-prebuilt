@@ -66,8 +66,14 @@ var opts = {
 	follow_max: 3,
 }
 
+var target = process.cwd();
+if (process.env.WCJS_TARGET) {
+	target = process.env.WCJS_TARGET;
+	require("mkdirp").sync(target);
+}
+
 console.log("Installing VLC bundle from "+bundle);
-needle.get(bundle, opts).on("error", onerr).pipe(gunzip()).pipe(tar.extract(".")).on("error", onerr).on("finish", function() {
+needle.get(bundle, opts).on("error", onerr).pipe(gunzip()).pipe(tar.extract(target)).on("error", onerr).on("finish", function() {
 	console.log("VLC bundle installed");
 });
 
@@ -77,7 +83,7 @@ console.log("Installing WebChimera.js.node from "+wcjs);
 	if (wcjs.match("zip")) wcjsPipe.pipe(unzip.Parse()).on("entry", function(entry) { next(entry) });
 	else next(wcjsPipe);
 })(function(wcjsPipe) {
-	wcjsPipe.pipe(fs.createWriteStream("./WebChimera.js.node")).on("finish", function() {
+	wcjsPipe.pipe(fs.createWriteStream(path.join(target, "WebChimera.js.node"))).on("finish", function() {
 		console.log("WebChimera.js.node installed");
 	});
 })
