@@ -4,15 +4,12 @@
   "description": "Install WebChimera.js pre-built binaries via npm",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "postinstall": "node install.js",
+    "cache-clean": "rm -rf WebChimera.js.node vlc lib libvlc.dll libvlccore.dll plugins"
   },
   "repository": {
     "type": "git",
     "url": "http://github.com/Ivshti/wcjs-prebuilt"
-  },
-  "scripts": {
-    "postinstall": "node install.js",
-    "cache-clean": "rm -rf WebChimera.js.node vlc lib libvlc.dll libvlccore.dll plugins"
   },
   "keywords": [
     "webchimera",
@@ -28,6 +25,7 @@
   "homepage": "https://github.com/Ivshti/wcjs-prebuilt",
   "dependencies": {
     "gunzip-maybe": "^1.2.1",
+    "mkdirp": "^0.5.1",
     "needle": "^0.10.0",
     "tar-fs": "^1.8.1",
     "unzip": "0.1.x"
