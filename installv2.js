@@ -5,6 +5,7 @@ var needle = require('needle');
 var _ = require('lodash');
 var downloader = require('./lib/downloader');
 var findProjectRoot = require('find-project-root');
+var mkdirp = require('mkdirp');
 
 var rootdir = findProjectRoot(process.cwd(), {
     maxDepth: 12
@@ -110,6 +111,8 @@ function parseEnv() {
         var runtime = process.env.WCJS_RUNTIME || 'electron';
         var runtimeVersion = process.env.WCJS_RUNTIME_VERSION || 'latest';
         var targetDir = process.env.WCJS_TARGET || './bin';
+
+        mkdirp.sync(targetDir);
 
         if (/^win/.test(platform))
             platform = 'win';
