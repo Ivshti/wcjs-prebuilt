@@ -4,7 +4,7 @@
     "description": "Install WebChimera.js pre-built binaries via npm",
     "main": "index.js",
     "scripts": {
-        "postinstall": "node installv2.js",
+        "postinstall": "node install.js",
         "cache-clean": "rm -rf bin"
     },
     "repository": {
