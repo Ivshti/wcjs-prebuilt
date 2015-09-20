@@ -1,1 +1,1 @@
-module.exports = require("./WebChimera.js.node");
+module.exports = require((process.env.WCJS_TARGET || './bin') + "/WebChimera.js.node");
