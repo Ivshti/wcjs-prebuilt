@@ -48,7 +48,7 @@ function getWCJS(data) {
                 if (!downloadObject)
                     return reject('No download candidate availale')
                 console.log('Aquiring:', downloadObject.name);
-                downloader.downloadAndUnpack('./bin', downloadObject.url)
+                downloader.downloadAndUnpack(data.targetDir, downloadObject.url)
                     .then(function() {
                         resolve(data);
                     });
@@ -83,7 +83,7 @@ function getVLC(data) {
                     return reject('No VLC libs found for this system');
 
                 console.log('Retriving VLC Libs:', asset.version, asset.platform);
-                downloader.downloadAndUnpack('./bin', asset.url)
+                downloader.downloadAndUnpack(data.targetDir, asset.url)
                     .then(resolve)
 
             })
@@ -109,6 +109,7 @@ function parseEnv() {
         var version = process.env.WCJS_VERSION || 'latest';
         var runtime = process.env.WCJS_RUNTIME || 'electron';
         var runtimeVersion = process.env.WCJS_RUNTIME_VERSION || 'latest';
+        var targetDir = process.env.WCJS_TARGET || './bin';
 
         if (/^win/.test(platform))
             platform = 'win';
@@ -132,6 +133,7 @@ function parseEnv() {
                 platform: platform,
                 arch: arch,
                 runtimeVersion: runtimeVersion,
+                targetDir: targetDir,
                 version: version,
                 runtime: runtime
             });
