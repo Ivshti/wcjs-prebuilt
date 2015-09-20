@@ -32,8 +32,10 @@ var wcjs = require("wcjs-prebuilt");
 // wcjs is WebChimera.js
 ```
 
-## Used in
+## Used in (ordered by date of adoption)
 * [Stremio](www.strem.io) - since version 2.0
+* [Powder Player](http://powder.media) - since version 0.90
 * [Popcorn Time](https://popcorntime.io) - not yet released with WebChimera.js, in progress
+
 
 (please PR other use cases)
