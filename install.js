@@ -6,6 +6,8 @@ var _ = require('lodash');
 var downloader = require('./lib/downloader');
 var findProjectRoot = require('find-project-root');
 var mkdirp = require('mkdirp');
+var parsePath = require('parse-filepath');
+
 
 var rootdir = findProjectRoot(process.cwd(), {
     maxDepth: 12
@@ -27,15 +29,15 @@ function getWCJS(data) {
                 var availableVersions = [];
 
                 _.remove(json.assets, function(asset) {
-                    asset = path.parse(asset.name).name.split('_');
+                    asset = parsePath(asset.name).name.split('_');
                     if (asset[1] === 'nw')
                         asset[1] = 'nw.js'
                     return (asset[1] === data.runtime && asset[3] === data.arch && asset[4] === data.platform); //remove all that are not for our runtime/arch/os.
                 }).forEach(function(entry) {
                     availableVersions.push({
-                        version: path.parse(entry.name).name.split('_')[2],
+                        version: parsePath(entry.name).name.split('_')[2],
                         url: entry.browser_download_url,
-                        name: path.parse(entry.name).name
+                        name: parsePath(entry.name).name
                     })
                 });
                 if (data.runtimeVersion === 'latest') {
@@ -66,7 +68,7 @@ function getVLC(data) {
 
                 var asset = false;
                 json.assets.forEach(function(entry) {
-                    var targetOS = path.parse(path.parse(entry.name).name).name.split('-');
+                    var targetOS = parsePath(parsePath(entry.name).name).name.split('-');
 
                     if (/^win/.test(targetOS[2]))
                         var platform = 'win';
@@ -122,7 +124,7 @@ function parseEnv() {
         try {
             // WARNING: this currently reads in our dear, so it's useless
             var manifest = require(path.join(rootdir, "package.json"));
-            if (path.parse(manifest.main).ext === '.html') {
+            if (parsePath(manifest.main).extname === '.html') {
                 runtime = 'nw.js';
             }
         } catch (e) {};
