@@ -70,6 +70,7 @@ var target = process.cwd();
 if (process.env.WCJS_TARGET) {
 	target = process.env.WCJS_TARGET;
 	require("mkdirp").sync(target);
+	console.log("using target -> "+target);
 }
 
 console.log("Installing VLC bundle from "+bundle);
