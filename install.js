@@ -122,12 +122,11 @@ function parseEnv() {
             platform = 'osx'
 
         try {
-            // WARNING: this currently reads in our dear, so it's useless
             var manifest = require(path.join(rootdir, "package.json"));
             if (parsePath(manifest.main).extname === '.html') {
-                runtime = 'nw.js';
+                if (!process.env.WCJS_RUNTIME) runtime = 'nw.js';
             }
-        } catch (e) {};
+        } catch (e) { console.error(e) };
 
         console.log('Runtime detected as:', runtime, '\nArch:', arch)
 
