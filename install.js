@@ -8,7 +8,7 @@ var findProjectRoot = require('find-project-root');
 var mkdirp = require('mkdirp');
 var parsePath = require('parse-filepath');
 
-
+var env = _.extend({}, process.env);
 var rootdir = findProjectRoot(process.cwd(), {
     maxDepth: 12
 });
@@ -106,13 +106,12 @@ function parseEnv() {
 
 
     return new Promise(function(resolve, reject) {
-
-        var platform = process.env.WCJS_PLATFORM || process.platform;
-        var arch = process.env.WCJS_ARCH || process.arch;
-        var version = process.env.WCJS_VERSION || 'latest';
-        var runtime = process.env.WCJS_RUNTIME || 'electron';
-        var runtimeVersion = process.env.WCJS_RUNTIME_VERSION || 'latest';
-        var targetDir = process.env.WCJS_TARGET || './bin';
+        var platform = env.WCJS_PLATFORM || process.platform;
+        var arch = env.WCJS_ARCH || process.arch;
+        var version = env.WCJS_VERSION || 'latest';
+        var runtime = env.WCJS_RUNTIME || 'electron';
+        var runtimeVersion = env.WCJS_RUNTIME_VERSION || 'latest';
+        var targetDir = env.WCJS_TARGET || './bin';
 
         mkdirp.sync(targetDir);
 
