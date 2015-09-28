@@ -126,7 +126,7 @@ function parseEnv() {
             if (parsePath(manifest.main).extname === '.html') {
                 if (!process.env.WCJS_RUNTIME) runtime = 'nw.js';
             }
-        } catch (e) { console.error(e) };
+        } catch (e) { };
 
         console.log('Runtime detected as:', runtime, '\nArch:', arch)
 
