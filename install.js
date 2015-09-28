@@ -44,7 +44,7 @@ function getWCJS(data) {
                     var downloadObject = _.last(availableVersions);
                 } else {
                     var downloadObject = _(availableVersions)
-                        .filter(function(version) {
+                        .find(function(version) {
                             return version.version === data.runtimeVersion;
                         });
                 }
