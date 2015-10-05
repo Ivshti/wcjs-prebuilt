@@ -109,6 +109,7 @@ function parseEnv() {
 
         try {
             var manifest = require(path.join(rootdir, "package.json"));
+            manifest['wcjs-prebuilt'] = manifest['wcjs-prebuilt'] || {};
         } catch (e) {};
 
         var platform = manifest['wcjs-prebuilt'].platform || process.platform;
