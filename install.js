@@ -114,12 +114,12 @@ function parseEnv() {
 
         var inf = (manifest && manifest['wcjs-prebuilt']) ? manifest['wcjs-prebuilt'] : {};
         
-        var platform = (process.env.WCJS_PLATFORM || inf.platform) ? true : process.platform;
-        var arch = (process.env.WCJS_ARCH || inf.runtime_arch) ? true : process.arch;
-        var version = (process.env.WCJS_VERSION || inf.version) ? true : 'latest';
-        var runtime = (process.env.WCJS_RUNTIME || inf.runtime) ? true : 'electron';
-        var runtimeVersion = (process.env.WCJS_RUNTIME_VERSION || inf.runtime_version) ? true : 'latest';
-        var targetDir = (process.env.WCJS_TARGET || inf.dir) ? true : './bin';
+        var platform = process.env.WCJS_PLATFORM || inf.platform || process.platform;
+        var arch = process.env.WCJS_ARCH || inf.runtime_arch || process.arch;
+        var version = process.env.WCJS_VERSION || inf.version || 'latest';
+        var runtime = process.env.WCJS_RUNTIME || inf.runtime || 'electron';
+        var runtimeVersion = process.env.WCJS_RUNTIME_VERSION || inf.runtime_version || 'latest';
+        var targetDir = process.env.WCJS_TARGET || inf.dir || './bin';
 
         mkdirp.sync(targetDir);
 
