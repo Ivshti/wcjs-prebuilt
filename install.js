@@ -50,7 +50,7 @@ function getWCJS(data) {
                 }
                 if (!downloadObject)
                     return reject('No download candidate availale')
-                console.log('Aquiring:', downloadObject.name);
+                console.log('Acquiring: ', downloadObject.name);
                 downloader.downloadAndUnpack(data.targetDir, downloadObject.url)
                     .then(function() {
                         resolve(data);
