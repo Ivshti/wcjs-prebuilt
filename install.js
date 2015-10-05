@@ -107,17 +107,16 @@ function parseEnv() {
 
     return new Promise(function(resolve, reject) {
 
-
         try {
             var manifest = require(path.join(rootdir, "package.json"));
         } catch (e) {};
 
-        var platform = (process.env.WCJS_PLATFORM || manifest['wcjs-prebuilt'].platform) ? true : process.platform;
-        var arch = (process.env.WCJS_ARCH || manifest['wcjs-prebuilt'].runtime_arch) ? true : process.arch;
-        var version = (process.env.WCJS_VERSION || manifest['wcjs-prebuilt'].version) ? true : 'latest';
-        var runtime = (process.env.WCJS_RUNTIME || manifest['wcjs-prebuilt'].runtime) ? true : 'electron';
-        var runtimeVersion = (process.env.WCJS_RUNTIME_VERSION || manifest['wcjs-prebuilt'].runtime_version) ? true : 'latest';
-        var targetDir = (process.env.WCJS_TARGET || manifest['wcjs-prebuilt'].dir) ? true : './bin';
+        var platform = manifest['wcjs-prebuilt'].platform || process.platform;
+        var arch = manifest['wcjs-prebuilt'].runtime_arch || process.arch;
+        var version = manifest['wcjs-prebuilt'].version ||  'latest';
+        var runtime = manifest['wcjs-prebuilt'].runtime || 'electron';
+        var runtimeVersion = manifest['wcjs-prebuilt'].runtime_version || 'latest';
+        var targetDir = manifest['wcjs-prebuilt'].dir || './bin';
 
         mkdirp.sync(targetDir);
 
