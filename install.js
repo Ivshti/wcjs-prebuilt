@@ -107,12 +107,17 @@ function parseEnv() {
 
     return new Promise(function(resolve, reject) {
 
-        var platform = process.env.WCJS_PLATFORM || process.platform;
-        var arch = process.env.WCJS_ARCH || process.arch;
-        var version = process.env.WCJS_VERSION || 'latest';
-        var runtime = process.env.WCJS_RUNTIME || 'electron';
-        var runtimeVersion = process.env.WCJS_RUNTIME_VERSION || 'latest';
-        var targetDir = process.env.WCJS_TARGET || './bin';
+
+        try {
+            var manifest = require(path.join(rootdir, "package.json"));
+        } catch (e) {};
+
+        var platform = (process.env.WCJS_PLATFORM || manifest['wcjs-prebuilt'].platform) ? true : process.platform;
+        var arch = (process.env.WCJS_ARCH || manifest['wcjs-prebuilt'].runtime_arch) ? true : process.arch;
+        var version = (process.env.WCJS_VERSION || manifest['wcjs-prebuilt'].version) ? true : 'latest';
+        var runtime = (process.env.WCJS_RUNTIME || manifest['wcjs-prebuilt'].runtime) ? true : 'electron';
+        var runtimeVersion = (process.env.WCJS_RUNTIME_VERSION || manifest['wcjs-prebuilt'].runtime_version) ? true : 'latest';
+        var targetDir = (process.env.WCJS_TARGET || manifest['wcjs-prebuilt'].dir) ? true : './bin';
 
         mkdirp.sync(targetDir);
 
@@ -120,13 +125,11 @@ function parseEnv() {
             platform = 'win';
         else if (platform === 'darwin')
             platform = 'osx'
-
-        try {
-            var manifest = require(path.join(rootdir, "package.json"));
+        if (manifest)
             if (parsePath(manifest.main).extname === '.html') {
                 if (!process.env.WCJS_RUNTIME) runtime = 'nw.js';
             }
-        } catch (e) { };
+
 
         console.log('Runtime detected as:', runtime, '\nArch:', arch)
 
