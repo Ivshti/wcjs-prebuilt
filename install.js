@@ -50,7 +50,7 @@ function getWCJS(data) {
                 }
                 if (!downloadObject)
                     return reject('No download candidate availale')
-                console.log('Aquiring:', downloadObject.name);
+                console.log('Acquiring: ', downloadObject.name);
                 downloader.downloadAndUnpack(data.targetDir, downloadObject.url)
                     .then(function() {
                         resolve(data);
@@ -110,8 +110,9 @@ function parseEnv() {
 
         try {
             var manifest = require(path.join(rootdir, "package.json"));
-            manifest['wcjs-prebuilt'] = manifest['wcjs-prebuilt'] || {};
         } catch (e) {};
+        
+        manifest['wcjs-prebuilt'] = manifest['wcjs-prebuilt'] || {};
 
         var platform = (process.env.WCJS_PLATFORM || manifest['wcjs-prebuilt'].platform) ? true : process.platform;
         var arch = (process.env.WCJS_ARCH || manifest['wcjs-prebuilt'].runtime_arch) ? true : process.arch;
