@@ -168,5 +168,5 @@ parseEnv()
         console.log('WCJS & VLC Libs Downloaded');
     })
     .catch(function(e) {
-        console.log(e)
+        console.log(e.stack)
     })
