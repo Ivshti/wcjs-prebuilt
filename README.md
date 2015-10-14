@@ -1,4 +1,4 @@
-# wcjs-prebuilt
+# <img alt="WebChimera.js Prebuilt" src="https://raw.githubusercontent.com/jaruba/wcjs-logos/master/logos/small/wcjs-prebuilt.png">
 
 ![badge](https://nodei.co/npm/wcjs-prebuilt.png?downloads=true)
 
