@@ -18,13 +18,14 @@ You can also tweak WebChimera.js version through ``WCJS_VERSION``.
 
 For example, to install for Windows under any OS, use
 ```
-WCJS_PLATFORM=win32 WCJS_ARCH=ia32 npm install wcjs-prebuilt
+WCJS_PLATFORM=win WCJS_ARCH=ia32 WCJS_RUNTIME=nw.js npm install wcjs-prebuilt
 ```
+Currently supported platforms are ``osx``, ``win``, and ``linux``.
 
-Currently supported runtimes are:
+Currently supported runtimes:
 * ``electron`` / ``electron44`` - Electron 0.29.x, based on chromium 44
 * ``electron45`` - electron 0.31.x, based on chromium 45
-* ``nwjs`` - latest NW.js
+* ``nw.js`` - latest NW.js
 
 ## Programmatic usage
 ```javascript
