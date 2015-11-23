@@ -13,9 +13,9 @@ function getPlatformInfo() {
     if (/linux/.test(process.platform)) {
         return process.arch == 32 ? 'linux:ia32' : 'linux:x64';
     } else if (/darwin/.test(process.platform)) {
-        return 'osx:ia32';
+        return 'osx:' + process.arch;
     } else {
-        return 'win:ia32';
+        return 'win:' + process.arch;
     }
 }
 
@@ -24,17 +24,11 @@ var rootdir = findProjectRoot(process.cwd(), {
 });
 
 function getWCJS(data) {
-
-    var runtime = data.runtime,
-        version = data.version,
-        dir = data.dir;
-
     return new Promise(function(resolve, reject) {
-        getJson(('https://api.github.com/repos/RSATom/WebChimera.js/releases/' + ((version === 'latest') ? 'latest' : 'tags/' + version)))
+        getJson(('https://api.github.com/repos/RSATom/WebChimera.js/releases/' + ((data.version === 'latest') ? 'latest' : 'tags/' + data.version)))
             .then(function(json) {
                 if (json.message === 'Not Found') {
-                    console.log('No WebChimera Download Found');
-                    return reject();
+                    return reject('No WebChimera Download Found');
                 }
                 var candidate = false;
 
@@ -43,22 +37,21 @@ function getWCJS(data) {
 
                     var assetRuntime = {
                         type: assetParsed[1],
-                        version: (version === 'latest') ? 'latest' : assetParsed[2],
+                        version: (data.version === 'latest') ? 'latest' : assetParsed[2],
                         arch: assetParsed[3],
                         platform: assetParsed[4]
                     };
-                    if (_.isEqual(runtime, assetRuntime))
+                    if (_.isEqual(data.runtime, assetRuntime))
                         candidate = asset;
                 });
 
                 if (!candidate) {
-                    console.log('No WebChimera Download Found');
-                    return reject();
+
                 }
 
                 console.log('Acquiring: ', candidate.name);
 
-                downloader.downloadAndUnpack(dir, candidate.browser_download_url)
+                downloader.downloadAndUnpack(data.dir, candidate.browser_download_url)
                     .then(function() {
                         resolve(data)
                     });
@@ -68,25 +61,17 @@ function getWCJS(data) {
 }
 
 function getVLC(data) {
-
-    var platform = data.runtime.platform,
-        arch = data.version.arch,
-        dir = data.dir;
-
-
     return new Promise(function(resolve, reject) {
-        utils.getJson('https://api.github.com/repos/Magics-Group/vlc-prebuilt/releases/latest')
+        getJson('https://api.github.com/repos/Magics-Group/vlc-prebuilt/releases/latest')
             .then(function(json) {
-
                 if (json.message === 'Not Found') {
-                    console.log('No VLC Download Found');
-                    return reject();
+                    return reject('No VLC Download Found');
                 }
                 var candidate = false;
 
                 var LookingObject = {
-                    platform: platform,
-                    arch: arch
+                    platform: data.runtime.platform,
+                    arch: data.runtime.arch
                 };
 
                 _.forEach(json.assets, function(asset) {
@@ -100,13 +85,12 @@ function getVLC(data) {
                 });
 
                 if (!candidate) {
-                    console.log('No VLC Download Found');
-                    return reject();
+                    return reject('No VLC Download Found');
                 }
 
                 console.log('Acquiring:', candidate.name);
 
-                downloader.downloadAndUnpack(dir, candidate.browser_download_url)
+                downloader.downloadAndUnpack(data.dir, candidate.browser_download_url)
                     .then(resolve);
 
             })
@@ -157,18 +141,19 @@ function parseEnv() {
         console.log('Runtime detected as:', runtime, '\nArch:', arch)
 
         if (!(supported.runtimes.indexOf(runtime) > -1) || !(supported.platforms.indexOf(platform) > -1) || !(supported.arch.indexOf(arch) > -1))
-            reject('Unsupported runtime/arch/platform');
-        else
-            resolve({
-                runtime: {
-                    type: runtime,
-                    version: runtimeVersion,
-                    arch: arch,
-                    platform: platform
-                }
-                dir: targetDir,
-                version: version
-            });
+            return reject('Unsupported runtime/arch/platform');
+
+
+        resolve({
+            runtime: {
+                type: runtime,
+                version: runtimeVersion,
+                arch: arch,
+                platform: platform
+            },
+            dir: targetDir,
+            version: version
+        });
     });
 }
 
@@ -184,6 +169,7 @@ function getJson(url) {
         });
     })
 }
+
 parseEnv()
     .then(getWCJS)
     .then(getVLC)
@@ -192,5 +178,6 @@ parseEnv()
     })
     .catch(function(e) {
         console.log(e.message || e);
-        console.log(e.stack);
+        if (e.stack)
+            console.log(e.stack);
     })
