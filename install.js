@@ -9,51 +9,51 @@ var mkdirp = require('mkdirp');
 var parsePath = require('parse-filepath');
 
 
+function getPlatformInfo() {
+    if (/linux/.test(process.platform)) {
+        return process.arch == 32 ? 'linux:ia32' : 'linux:x64';
+    } else if (/darwin/.test(process.platform)) {
+        return 'osx:' + process.arch;
+    } else {
+        return 'win:' + process.arch;
+    }
+}
+
 var rootdir = findProjectRoot(process.cwd(), {
     maxDepth: 12
 });
 
 function getWCJS(data) {
     return new Promise(function(resolve, reject) {
-        if (data.version !== 'latest')
-            var url = 'https://api.github.com/repos/RSATom/WebChimera.js/releases/tags/' + data.version;
-
-        getJson('https://api.github.com/repos/RSATom/WebChimera.js/releases/latest' || url)
+        getJson(('https://api.github.com/repos/RSATom/WebChimera.js/releases/' + ((data.version === 'latest') ? 'latest' : 'tags/' + data.version)))
             .then(function(json) {
-
-                if (json.message && json.message === 'Not Found')
-                    return reject('Version Tag Not Found')
-
-                var downloadName = json.name;
-
-                var availableVersions = [];
-
-                _.remove(json.assets, function(asset) {
-                    asset = parsePath(asset.name).name.split('_');
-                    if (asset[1] === 'nw')
-                        asset[1] = 'nw.js'
-                    return (asset[1] === data.runtime && asset[3] === data.arch && asset[4] === data.platform); //remove all that are not for our runtime/arch/os.
-                }).forEach(function(entry) {
-                    availableVersions.push({
-                        version: parsePath(entry.name).name.split('_')[2],
-                        url: entry.browser_download_url,
-                        name: parsePath(entry.name).name
-                    })
-                });
-                if (data.runtimeVersion === 'latest') {
-                    var downloadObject = _.last(availableVersions);
-                } else {
-                    var downloadObject = _(availableVersions)
-                        .find(function(version) {
-                            return version.version === data.runtimeVersion;
-                        });
+                if (json.message === 'Not Found') {
+                    return reject('No WebChimera Download Found');
                 }
-                if (!downloadObject)
-                    return reject('No download candidate availale')
-                console.log('Acquiring: ', downloadObject.name);
-                downloader.downloadAndUnpack(data.targetDir, downloadObject.url)
+                var candidate = false;
+
+                _.forEach(json.assets, function(asset) {
+                    var assetParsed = path.parse(asset.name).name.split('_');
+
+                    var assetRuntime = {
+                        type: assetParsed[1],
+                        version: (data.version === 'latest') ? 'latest' : assetParsed[2],
+                        arch: assetParsed[3],
+                        platform: assetParsed[4]
+                    };
+                    if (_.isEqual(data.runtime, assetRuntime))
+                        candidate = asset;
+                });
+
+                if (!candidate) {
+
+                }
+
+                console.log('Acquiring: ', candidate.name);
+
+                downloader.downloadAndUnpack(data.dir, candidate.browser_download_url)
                     .then(function() {
-                        resolve(data);
+                        resolve(data)
                     });
             })
             .catch(reject)
@@ -62,37 +62,42 @@ function getWCJS(data) {
 
 function getVLC(data) {
     return new Promise(function(resolve, reject) {
-
-        getJson('https://api.github.com/repos/Ivshti/vlc-prebuilt/releases/latest')
+        getJson('https://api.github.com/repos/Magics-Group/vlc-prebuilt/releases/latest')
             .then(function(json) {
+                if (json.message === 'Not Found') {
+                    return reject('No VLC Download Found');
+                }
+                var candidate = false;
 
-                var asset = false;
-                json.assets.forEach(function(entry) {
-                    var targetOS = parsePath(parsePath(entry.name).name).name.split('-');
+                var LookingObject = {
+                    platform: data.runtime.platform,
+                    arch: data.runtime.arch
+                };
 
-                    if (/^win/.test(targetOS[2]))
-                        var platform = 'win';
-                    else
-                        var platform = targetOS[2]
-
-                    if (platform === data.platform)
-                        asset = {
-                            url: entry.browser_download_url,
-                            version: targetOS[1],
-                            platform: targetOS[2]
-                        }
+                _.forEach(json.assets, function(asset) {
+                    var assetParsed = path.parse(asset.name).name.split('-');
+                    var assetObject = {
+                        platform: assetParsed[1],
+                        arch: assetParsed[2].split('.')[0]
+                    };
+                    if (_.isEqual(assetObject, LookingObject))
+                        candidate = asset;
                 });
-                if (!asset)
-                    return reject('No VLC libs found for this system');
 
-                console.log('Retriving VLC Libs:', asset.version, asset.platform);
-                downloader.downloadAndUnpack(data.targetDir, asset.url)
-                    .then(resolve)
+                if (!candidate) {
+                    return reject('No VLC Download Found');
+                }
+
+                console.log('Acquiring:', candidate.name);
+
+                downloader.downloadAndUnpack(data.dir, candidate.browser_download_url)
+                    .then(resolve);
 
             })
-            .catch(reject)
+            .catch(reject);
     });
 }
+
 
 
 function parseEnv() {
@@ -113,9 +118,9 @@ function parseEnv() {
         } catch (e) {};
 
         var inf = (manifest && manifest['wcjs-prebuilt']) ? manifest['wcjs-prebuilt'] : {};
-        
-        var platform = process.env.WCJS_PLATFORM || inf.platform || process.platform;
-        var arch = process.env.WCJS_ARCH || inf.runtime_arch || process.arch;
+
+        var platform = process.env.WCJS_PLATFORM || inf.platform || getPlatformInfo().split(':')[0];
+        var arch = process.env.WCJS_ARCH || inf.runtime_arch || getPlatformInfo().split(':')[1];
         var version = process.env.WCJS_VERSION || inf.version || 'latest';
         var runtime = process.env.WCJS_RUNTIME || inf.runtime || 'electron';
         var runtimeVersion = process.env.WCJS_RUNTIME_VERSION || inf.runtime_version || 'latest';
@@ -136,16 +141,19 @@ function parseEnv() {
         console.log('Runtime detected as:', runtime, '\nArch:', arch)
 
         if (!(supported.runtimes.indexOf(runtime) > -1) || !(supported.platforms.indexOf(platform) > -1) || !(supported.arch.indexOf(arch) > -1))
-            reject('Unsupported runtime/arch/platform');
-        else
-            resolve({
-                platform: platform,
+            return reject('Unsupported runtime/arch/platform');
+
+
+        resolve({
+            runtime: {
+                type: runtime,
+                version: runtimeVersion,
                 arch: arch,
-                runtimeVersion: runtimeVersion,
-                targetDir: targetDir,
-                version: version,
-                runtime: runtime
-            });
+                platform: platform
+            },
+            dir: targetDir,
+            version: version
+        });
     });
 }
 
@@ -161,6 +169,7 @@ function getJson(url) {
         });
     })
 }
+
 parseEnv()
     .then(getWCJS)
     .then(getVLC)
@@ -169,5 +178,6 @@ parseEnv()
     })
     .catch(function(e) {
         console.log(e.message || e);
-        console.log(e.stack);
+        if (e.stack)
+            console.log(e.stack);
     })
