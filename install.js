@@ -164,7 +164,7 @@ function getJson(url) {
             json: true
         }, function(err, resp) {
             if (err || !resp.body)
-                return reject('something went Very Wong:' + (err || "no body!?!?!"));
+                return reject('something went very wrong: ' + (err || "no body!?!?!"));
             resolve(resp.body)
         });
     })
@@ -178,6 +178,6 @@ parseEnv()
     })
     .catch(function(e) {
         console.log(e.message || e);
-        if (e.stack)
-            console.log(e.stack);
+        if (e.stack) console.log(e.stack);
+        process.exit(1); // indicate to npm that we've quit badly
     })
