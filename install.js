@@ -15,10 +15,10 @@ var rootdir = findProjectRoot(process.cwd(), {
 
 function getWCJS(data) {
     return new Promise(function(resolve, reject) {
-        if (data.version !== 'latest')
-            var url = 'https://api.github.com/repos/RSATom/WebChimera.js/releases/tags/' + data.version;
+	var url;
+        if (data.version !== 'latest') url = 'https://api.github.com/repos/RSATom/WebChimera.js/releases/tags/' + data.version;
 
-        getJson('https://api.github.com/repos/RSATom/WebChimera.js/releases/latest' || url)
+        getJson(url || 'https://api.github.com/repos/RSATom/WebChimera.js/releases/latest')
             .then(function(json) {
 
                 if (json.message && json.message === 'Not Found')
