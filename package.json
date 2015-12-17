@@ -1,43 +1,43 @@
 {
-    "name": "wcjs-prebuilt",
-    "version": "2.0.7",
-    "description": "Install WebChimera.js pre-built binaries via npm",
-    "main": "index.js",
-    "scripts": {
-        "postinstall": "node install.js",
-        "cache-clean": "rm -rf bin"
-    },
-    "repository": {
-        "type": "git",
-        "url": "http://github.com/Ivshti/wcjs-prebuilt"
-    },
-    "keywords": [
-        "webchimera",
-        "webchimera.js",
-        "vlc",
-        "prebuilt"
-    ],
-    "author": "Ivo Georgiev",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/Ivshti/wcjs-prebuilt/issues"
-    },
-    "homepage": "https://github.com/Ivshti/wcjs-prebuilt",
-    "dependencies": {
-        "bluebird": "^2.10.0",
-        "decompress-zip": "^0.2.0",
-        "find-project-root": "^1.1.1",
-        "graceful-ncp": "^2.0.0",
-        "gunzip-maybe": "^1.2.1",
-        "lodash": "^3.10.1",
-        "mkdirp": "^0.5.1",
-        "needle": "^0.10.0",
-        "parse-filepath": "^0.6.3",
-        "progress": "^1.1.8",
-        "request": "^2.62.0",
-        "rimraf": "^2.4.3",
-        "tar-fs": "^1.8.1",
-        "temp": "^0.8.3",
-        "unzip": "0.1.x"
-    }
+  "name": "wcjs-prebuilt",
+  "version": "2.1.0",
+  "description": "Install WebChimera.js pre-built binaries via npm",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "node install.js",
+    "cache-clean": "rm -rf bin"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/Ivshti/wcjs-prebuilt"
+  },
+  "keywords": [
+    "webchimera",
+    "webchimera.js",
+    "vlc",
+    "prebuilt"
+  ],
+  "author": "Ivo Georgiev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Ivshti/wcjs-prebuilt/issues"
+  },
+  "homepage": "https://github.com/Ivshti/wcjs-prebuilt",
+  "dependencies": {
+    "bluebird": "^2.10.0",
+    "decompress-zip": "^0.2.0",
+    "find-project-root": "^1.1.1",
+    "graceful-ncp": "^2.0.0",
+    "gunzip-maybe": "^1.2.1",
+    "lodash": "^3.10.1",
+    "mkdirp": "^0.5.1",
+    "needle": "^0.10.0",
+    "parse-filepath": "^0.6.3",
+    "progress": "^1.1.8",
+    "request": "^2.62.0",
+    "rimraf": "^2.4.3",
+    "tar-fs": "^1.8.1",
+    "temp": "^0.8.3",
+    "unzip": "0.1.x"
+  }
 }
