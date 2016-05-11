@@ -62,7 +62,7 @@ function getWCJS(data) {
 
 function getVLC(data) {
     return new Promise(function(resolve, reject) {
-        getJson('https://api.github.com/repos/Magics-Group/vlc-prebuilt/releases/latest')
+        getJson('https://api.github.com/repos/guidupuy/vlc-prebuilt/releases/latest')
             .then(function(json) {
                 if (json.message === 'Not Found') {
                     return reject('No VLC Download Found');
