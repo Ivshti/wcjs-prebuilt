@@ -109,7 +109,7 @@ function parseEnv() {
                 if (!process.env.WCJS_RUNTIME) runtime = 'nw.js';
             }
 
-        console.log('Fetching WebChimera prebuilt for', runtime, '\nWebChimera version:', version, 
+        console.log('Fetching WebChimera prebuilt for', capitalizeFirstLetter(runtime) + ':', '\nWebChimera version:', version, 
             '\n' + capitalizeFirstLetter(runtime) + ' version:', runtimeVersion, '\nPlatform:', platform, '\nArch:', arch);
 
         if (!(supported.runtimes.indexOf(runtime) > -1) || !(supported.platforms.indexOf(platform) > -1) || !(supported.arch.indexOf(arch) > -1))
