@@ -152,8 +152,12 @@ parseEnv()
         // Hackish: RSAtom's osx release includes a broken symlink that doesn't seem to be needed anyway
         // Keeping it will break Electron builder, so we remove it for now
         // TODO: remove these 2 lines when RSAtom fixes the issue
-        try { fs.unlink('./bin/lib/vlc/lib/liblzma.5.dylib'); } 
-        catch (e) { }
+        var liblzmaPath = './bin/lib/vlc/lib/liblzma.5.dylib';
+        fs.stat(liblzmaPath, function(err, stat) {
+            if(err == null) {
+                fs.unlink('./bin/lib/vlc/lib/liblzma.5.dylib');
+            }
+        });
         
         console.log('WebChimera with VLC Libs downloaded');
     })
