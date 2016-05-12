@@ -1,11 +1,10 @@
-var fs = require('fs');
+var fs = require('fs-extra');
 var path = require('path');
 var Promise = require('bluebird');
 var needle = require('needle');
 var _ = require('lodash');
 var downloader = require('./lib/downloader');
 var findProjectRoot = require('find-project-root');
-var mkdirp = require('mkdirp');
 var parsePath = require('parse-filepath');
 
 
@@ -103,7 +102,7 @@ function parseEnv() {
         var runtimeVersion = process.env.WCJS_RUNTIME_VERSION || inf.runtimeVersion || 'latest';
         var targetDir = process.env.WCJS_TARGET_DIR || inf.targetDir || './bin';
         
-        mkdirp.sync(targetDir);
+        fs.mkdirsSync(targetDir);
 
         if (/^win/.test(platform))
             platform = 'win';
