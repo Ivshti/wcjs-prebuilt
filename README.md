@@ -32,6 +32,7 @@ You'll generally want to configure at least the last 3 items. There are 2 ways y
   }
   ```
 
+Please note that not all combinations of runtime versions and WebChimera versions are available. You can see a list of available options [here](https://github.com/RSATom/WebChimera.js/releases)
 
 ## Installation
 
