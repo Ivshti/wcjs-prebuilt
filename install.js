@@ -26,11 +26,11 @@ var rootdir = findProjectRoot(process.cwd(), {
 function getWCJS(data) {
     return new Promise(function(resolve, reject) {
         var wcjsUrl = 'https://api.github.com/repos/RSATom/WebChimera.js/releases/' + (data.version === 'latest' ? 'latest' : ('tags/' + data.version));
-        console.log('Looking for WebChimera download at ' + wcjsUrl);
+        console.log('Looking for WebChimera download at ' + wcjsUrl + ' for environment: ', data.runtime);
         getJson(wcjsUrl)
             .then(function(json) {
                 if (json.message === 'Not Found') {
-                    reject('No WebChimera download found');
+                    reject('No WebChimera release found at the searched URL');
                 }
                 var candidate = null;
 
@@ -48,7 +48,7 @@ function getWCJS(data) {
                 });
 
                 if (!candidate) {
-                    reject('No WebChimera download found');
+                    reject('No WebChimera release found matching your environment');
                 }
 
                 console.log('Acquiring: ', candidate.name);
