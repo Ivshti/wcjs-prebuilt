@@ -94,7 +94,7 @@ function getWCJS(data) {
 
 function parseEnv() {
     var supported = {
-        runtimes: ['electron', 'nw.js'],
+        runtimes: ['electron', 'nw'],
         platforms: ['osx', 'win', 'linux'],
         arch: ['ia32', 'x64']
     }
@@ -119,7 +119,7 @@ function parseEnv() {
             platform = 'osx'
         if (manifest)
             if (parsePath(manifest.main).extname === '.html') {
-                if (!process.env.WCJS_RUNTIME) runtime = 'nw.js';
+                if (!process.env.WCJS_RUNTIME && !inf.runtime) runtime = 'nw';
             }
 
         console.log('Fetching WebChimera prebuilt for', capitalizeFirstLetter(runtime) + ':', '\nWebChimera version:', version, 
