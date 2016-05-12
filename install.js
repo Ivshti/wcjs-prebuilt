@@ -1,10 +1,11 @@
-var fs = require('fs-extra');
+var fs = require('fs');
 var path = require('path');
 var Promise = require('bluebird');
 var needle = require('needle');
 var _ = require('lodash');
 var downloader = require('./lib/downloader');
 var findProjectRoot = require('find-project-root');
+var mkdirp = require('mkdirp');
 var parsePath = require('parse-filepath');
 
 
