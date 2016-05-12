@@ -15,11 +15,11 @@ npm install wcjs-prebuilt
 ## Configuration
 
 The following elements can be configured:
-  - Target architecture (supported: `ia32` / `x64`) (default value: machine's architecture)
-  - Target platform (supported: `win` / `osx`) (default value: machine's platform)
-  - Target runtime (supported: `electron` / `nw`) (default value: `electron`)
-  - Target runtime version (format: `vX.Y.Z`, eg `v0.37.8`) (default value: latest available for the target runtime and WebChimera version)
-  - Target WebChimera version (format: `vX.Y.Z`, eg `v0.2.4`) (default value: latest)
+  - Target architecture (supported: `ia32` / `x64`. Default value: machine's architecture)
+  - Target platform (supported: `win` / `osx`. Default value: machine's platform)
+  - Target runtime (supported: `electron` / `nw`. Default value: `electron`)
+  - Target runtime version (format: `vX.Y.Z`. Default value: latest available for the target runtime and WebChimera version)
+  - Target WebChimera version (format: `vX.Y.Z`. Default value: latest)
 
 You'll generally want to configure at least the runtime, as well as the WebChimera and runtime versions. 
 
