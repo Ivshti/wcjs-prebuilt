@@ -43,7 +43,7 @@ function getWCJS(data) {
                 _.every(json.assets, function(asset) {
                     var assetParsed = path.parse(asset.name).name.replace('.tar', '').split('_');
                     
-                    if(assetParsed.toLower().indexOf('vlc') == -1){
+                    if(asset.name.toLower().indexOf('vlc') == -1){
                         console.log(asset.name, '\x1b[31m', 'doesn\'t include VLC','\x1b[0m');
                         return true;
                     }
@@ -56,7 +56,7 @@ function getWCJS(data) {
                     };
                     if (_.isEqual(data.runtime, assetRuntime)){
                         candidate = asset;
-                        console.log(asset.name, '\x1b[32m', 'matching environment: ' + (data.version === 'latest' ? 'continuing for more recent release' : 'stopping the search'), '\x1b[0m');
+                        console.log(asset.name, '\x1b[32m', 'matching environment' + (data.version === 'latest' ? ': continuing for more recent release' : ''), '\x1b[0m');
                         return data.version === 'latest';
                     }
                     else{
