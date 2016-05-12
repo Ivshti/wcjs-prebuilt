@@ -149,9 +149,12 @@ function getJson(url) {
 parseEnv()
     .then(getWCJS)
     .then(function() {
-        // Hack: RSAtom's release includes a broken symlink that doesn't seem to be needed anyway
-        // Keeping it will break Electron builder - we remove it until RSAtom fixes the issue
-        fs.unlink('./bin/lib/vlc/lib/liblzma.5.dylib');
+        // Hackish: RSAtom's osx release includes a broken symlink that doesn't seem to be needed anyway
+        // Keeping it will break Electron builder, so we remove it for now
+        // TODO: remove these 2 lines when RSAtom fixes the issue
+        try { fs.unlink('./bin/lib/vlc/lib/liblzma.5.dylib'); } 
+        catch (e) { }
+        
         console.log('WebChimera with VLC Libs downloaded');
     })
     .catch(function(e) {
