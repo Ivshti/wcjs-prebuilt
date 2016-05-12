@@ -107,10 +107,10 @@ function parseEnv() {
         var inf = (manifest && manifest['wcjs-prebuilt']) ? manifest['wcjs-prebuilt'] : {};
 
         var platform = process.env.WCJS_PLATFORM || inf.platform || getPlatformInfo().split(':')[0];
-        var arch = process.env.WCJS_ARCH || inf.runtime_arch || getPlatformInfo().split(':')[1];
+        var arch = process.env.WCJS_ARCH || inf.arch || getPlatformInfo().split(':')[1];
         var version = process.env.WCJS_VERSION || inf.version || 'latest';
         var runtime = process.env.WCJS_RUNTIME || inf.runtime || 'electron';
-        var runtimeVersion = process.env.WCJS_RUNTIME_VERSION || inf.runtime_version || 'latest';
+        var runtimeVersion = process.env.WCJS_RUNTIME_VERSION || inf.runtimeVersion || 'latest';
         var targetDir = './bin';
 
         if (/^win/.test(platform))
