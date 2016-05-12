@@ -6,26 +6,41 @@ Install [WebChimera.js](http://github.com/RSATom/WebChimera.js) prebuilt binarie
 
 WebChimera.js is a node.js binding to libvlc. You can use it to play video using a JS raw array buffer drawn via WebGL.
 
-
 ## Installation
 
 ```
 npm install wcjs-prebuilt
 ```
 
-You can install the module for another platform than the one you're running - for example if you want to package your application for another OS. To do that, use the ``WCJS_PLATFORM``, ``WCJS_ARCH`` environment variables.
-You can also tweak WebChimera.js version through ``WCJS_VERSION``.
+## Configuration
 
-For example, to install for Windows under any OS, use
-```
-WCJS_PLATFORM=win WCJS_ARCH=ia32 WCJS_RUNTIME=nw.js npm install wcjs-prebuilt
-```
-Currently supported platforms are ``osx``, ``win``, and ``linux``.
+The following elements can be configured:
+  - Target architecture (supported: `ia32` / `x64`) (default value: machine's architecture)
+  - Target platform (supported: `win` / `osx`) (default value: machine's platform)
+  - Target runtime (supported: `electron` / `nw`) (default value: `electron`)
+  - Target runtime version (format: `vX.Y.Z`, eg `v0.37.8`) (default value: latest available for the target runtime and WebChimera version)
+  - Target WebChimera version (format: `vX.Y.Z`, eg `v0.2.4`) (default value: latest)
 
-Currently supported runtimes:
-* ``electron`` / ``electron44`` - Electron 0.29.x, based on chromium 44
-* ``electron45`` - electron 0.31.x, based on chromium 45
-* ``nw.js`` - latest NW.js
+You'll generally want to configure at least the runtime, as well as the WebChimera and runtime versions. 
+
+You can specify each of these items in 2 ways:
+  - With the `WCJS_ARCH`, `WCJS_PLATFORM`, `WCJS_RUNTIME`, `WCJS_RUNTIME_VERSION` and `WCJS_VERSION` environment variables.
+  Here's an example:
+
+  ```
+  WCJS_ARCH=ia32 WCJS_PLATFORM=win WCJS_RUNTIME=electron WCJS_RUNTIME_VERSION=v0.37.8 WCJS_VERSION=v0.2.4 npm install wcjs-prebuilt
+  ```
+  - By adding a `wcjs-prebuilt` hash to your root `package.json`. This example should be self-explanatory:
+  
+  ```
+  "wcjs-prebuilt": {
+    "arch": "x64"
+    "platform": "osx"
+    "runtime": "electron"
+    "runtimeVersion": "v0.37.8"
+    "version": "v0.2.4"
+  }
+  ```
 
 ## Programmatic usage
 ```javascript
