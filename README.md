@@ -21,7 +21,7 @@ The following elements can be configured:
   - Target runtime version (format: `vX.Y.Z`. Default value: latest available for the target runtime and WebChimera version)
   - Target WebChimera version (format: `vX.Y.Z`. Default value: latest)
 
-You'll generally want to configure at least the runtime, as well as the WebChimera and runtime versions. 
+You'll generally want to configure at least the last 3 items. 
 
 You can specify each of these items in 2 ways:
   - With the `WCJS_ARCH`, `WCJS_PLATFORM`, `WCJS_RUNTIME`, `WCJS_RUNTIME_VERSION` and `WCJS_VERSION` environment variables.
