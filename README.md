@@ -21,21 +21,17 @@ The following elements can be configured:
   - Target runtime version (format: `vX.Y.Z`. Default value: latest available for the target runtime and WebChimera version)
   - Target WebChimera version (format: `vX.Y.Z`. Default value: latest)
 
-You'll generally want to configure at least the last 3 items. 
-
-You can specify each of these items in 2 ways:
+You'll generally want to configure at least the last 3 items. There are 2 ways you can do this:
   - With the `WCJS_ARCH`, `WCJS_PLATFORM`, `WCJS_RUNTIME`, `WCJS_RUNTIME_VERSION` and `WCJS_VERSION` environment variables.
   Here's an example:
 
   ```
-  WCJS_ARCH=ia32 WCJS_PLATFORM=win WCJS_RUNTIME=electron WCJS_RUNTIME_VERSION=v0.37.8 WCJS_VERSION=v0.2.4 npm install wcjs-prebuilt
+  WCJS_RUNTIME=electron WCJS_RUNTIME_VERSION=v0.37.8 WCJS_VERSION=v0.2.4 npm install wcjs-prebuilt
   ```
   - By adding a `wcjs-prebuilt` hash to your root `package.json`. This example should be self-explanatory:
   
   ```
   "wcjs-prebuilt": {
-    "arch": "x64"
-    "platform": "osx"
     "runtime": "electron"
     "runtimeVersion": "v0.37.8"
     "version": "v0.2.4"
