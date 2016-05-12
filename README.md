@@ -14,15 +14,15 @@ Before installing the package, you may need to configure a few things. Here's th
   - Target runtime (supported: `electron` / `nw`. Default value: `electron`)
   - Target runtime version (format: `vX.Y.Z`. Default value: latest available for the target runtime and WebChimera version)
   - Target WebChimera version (format: `vX.Y.Z`. Default value: latest)
+  - Target directory (where to install the binaries. Default value: `./bin`)
 
-You'll generally want to configure at least the last 3 items. There are 2 ways you can do this:
-  - With the `WCJS_ARCH`, `WCJS_PLATFORM`, `WCJS_RUNTIME`, `WCJS_RUNTIME_VERSION` and `WCJS_VERSION` environment variables.
-  Here's an example:
+There are 2 ways you can configure these elements this:
+  - With the `WCJS_ARCH`, `WCJS_PLATFORM`, `WCJS_RUNTIME`, `WCJS_RUNTIME_VERSION`, `WCJS_VERSION` and `WCJS_TARGET_DIR` environment variables. Here's an example:
 
   ```
   WCJS_RUNTIME=electron WCJS_RUNTIME_VERSION=v0.37.8 WCJS_VERSION=v0.2.4 npm install wcjs-prebuilt
   ```
-  - By adding a `wcjs-prebuilt` hash to your root `package.json`. This example should be self-explanatory:
+  - By adding a `wcjs-prebuilt` hash to your root `package.json` and define the following keys: `arch`, `platform`, `runtime`, `runtimeVersion`, `version`, `targetDir`. Here's an example:
   
   ```
   "wcjs-prebuilt": {
