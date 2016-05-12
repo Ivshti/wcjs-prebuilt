@@ -49,7 +49,7 @@ function getWCJS(data) {
 
                     var assetRuntime = {
                         type: assetParsed[2],
-                        version: (data.version === 'latest') ? 'latest' : assetParsed[3],
+                        version: (data.runtime.version === 'latest') ? 'latest' : assetParsed[3],
                         arch: assetParsed[6],
                         platform: assetParsed[7]
                     };
