@@ -72,18 +72,7 @@ function getWCJS(data) {
 
                 console.log('Acquiring: ', candidate.name);
                 
-                var dir = './bin';
-                try {
-                    stats = fs.lstatSync(dir);
-                    if (stats.isDirectory()) {
-                        fs.removeSync(dir);
-                    }
-                }
-                catch (e) { 
-                    fs.mkdir(dir);
-                }
-                
-                downloader.downloadAndUnpack(dir, candidate.browser_download_url)
+                downloader.downloadAndUnpack(data.dir, candidate.browser_download_url)
                     .then(function() {
                         resolve(data)
                     });
@@ -111,7 +100,9 @@ function parseEnv() {
         var version = process.env.WCJS_VERSION || inf.version || 'latest';
         var runtime = process.env.WCJS_RUNTIME || inf.runtime || 'electron';
         var runtimeVersion = process.env.WCJS_RUNTIME_VERSION || inf.runtimeVersion || 'latest';
-        var targetDir = './bin';
+        var targetDir = process.env.WCJS_TARGET_DIR || inf.targetDir || './bin';
+        
+        mkdirp.sync(targetDir);
 
         if (/^win/.test(platform))
             platform = 'win';
@@ -123,7 +114,8 @@ function parseEnv() {
             }
 
         console.log('Fetching WebChimera prebuilt for', capitalizeFirstLetter(runtime) + ':', '\nWebChimera version:', version, 
-            '\n' + capitalizeFirstLetter(runtime) + ' version:', runtimeVersion, '\nPlatform:', platform, '\nArch:', arch);
+            '\n' + capitalizeFirstLetter(runtime) + ' version:', runtimeVersion, '\nPlatform:', platform, '\nArch:', arch,
+            '\nTarget dir:', targetDir);
 
         if (!(supported.runtimes.indexOf(runtime) > -1) || !(supported.platforms.indexOf(platform) > -1) || !(supported.arch.indexOf(arch) > -1))
             return reject('Unsupported runtime/arch/platform');
@@ -135,6 +127,7 @@ function parseEnv() {
                 arch: arch,
                 platform: platform
             },
+            dir: targetDir,
             version: version
         });
     });
