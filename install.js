@@ -23,30 +23,52 @@ var rootdir = findProjectRoot(process.cwd(), {
     maxDepth: 12
 });
 
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 function getWCJS(data) {
     return new Promise(function(resolve, reject) {
-        getJson(('https://api.github.com/repos/RSATom/WebChimera.js/releases/' + ((data.version === 'latest') ? 'latest' : 'tags/' + data.version)))
+        var wcjsUrl = 'https://api.github.com/repos/RSATom/WebChimera.js/releases/' + (data.version === 'latest' ? 'latest' : ('tags/' + data.version));
+        console.log('');
+        console.log('Looking for WebChimera download at ' + wcjsUrl);
+        console.log('');
+        getJson(wcjsUrl)
             .then(function(json) {
                 if (json.message === 'Not Found') {
-                    return reject('No WebChimera Download Found');
+                    reject('No WebChimera release found at the searched URL');
                 }
-                var candidate = false;
+                var candidate = null;
 
-                _.forEach(json.assets, function(asset) {
-                    var assetParsed = path.parse(asset.name).name.split('_');
+                _.every(json.assets, function(asset) {
+                    var assetParsed = path.parse(asset.name).name.replace('.tar', '').split('_');
+                    
+                    if(asset.name.toLowerCase().indexOf('vlc') == -1){
+                        console.log(asset.name, '\x1b[31m', 'doesn\'t include VLC','\x1b[0m');
+                        return true;
+                    }
 
                     var assetRuntime = {
-                        type: assetParsed[1],
-                        version: (data.version === 'latest') ? 'latest' : assetParsed[2],
-                        arch: assetParsed[3],
-                        platform: assetParsed[4]
+                        type: assetParsed[2],
+                        version: (data.version === 'latest') ? 'latest' : assetParsed[3],
+                        arch: assetParsed[6],
+                        platform: assetParsed[7]
                     };
-                    if (_.isEqual(data.runtime, assetRuntime))
+                    if (_.isEqual(data.runtime, assetRuntime)){
                         candidate = asset;
+                        console.log(asset.name, '\x1b[32m', 'matching environment' + (data.version === 'latest' ? ': continuing for more recent release' : ''), '\x1b[0m');
+                        return data.version === 'latest';
+                    }
+                    else{
+                        console.log(asset.name, '\x1b[31m', 'not matching environment' ,'\x1b[0m');
+                        return true;
+                    }
                 });
+                
+                console.log('');
 
                 if (!candidate) {
-
+                    reject('No WebChimera release found matching your environment');
                 }
 
                 console.log('Acquiring: ', candidate.name);
@@ -60,59 +82,14 @@ function getWCJS(data) {
     });
 }
 
-function getVLC(data) {
-    return new Promise(function(resolve, reject) {
-        getJson('https://api.github.com/repos/Magics-Group/vlc-prebuilt/releases/latest')
-            .then(function(json) {
-                if (json.message === 'Not Found') {
-                    return reject('No VLC Download Found');
-                }
-                var candidate = false;
-
-                var LookingObject = {
-                    platform: data.runtime.platform,
-                    arch: data.runtime.arch
-                };
-
-                _.forEach(json.assets, function(asset) {
-                    var assetParsed = path.parse(asset.name).name.split('-');
-                    var assetObject = {
-                        platform: assetParsed[1],
-                        arch: assetParsed[2].split('.')[0]
-                    };
-                    if (_.isEqual(assetObject, LookingObject))
-                        candidate = asset;
-                });
-
-                if (!candidate) {
-                    return reject('No VLC Download Found');
-                }
-
-                console.log('Acquiring:', candidate.name);
-
-                downloader.downloadAndUnpack(data.dir, candidate.browser_download_url)
-                    .then(resolve);
-
-            })
-            .catch(reject);
-    });
-}
-
-
-
 function parseEnv() {
-
     var supported = {
         runtimes: ['electron', 'nw.js'],
         platforms: ['osx', 'win', 'linux'],
-        arch: ['ia32', 'x64'] //meh why not 
+        arch: ['ia32', 'x64']
     }
 
-
-
     return new Promise(function(resolve, reject) {
-
-
         try {
             var manifest = require(path.join(rootdir, "package.json"));
         } catch (e) {};
@@ -137,12 +114,11 @@ function parseEnv() {
                 if (!process.env.WCJS_RUNTIME) runtime = 'nw.js';
             }
 
-
-        console.log('Runtime detected as:', runtime, '\nArch:', arch)
+        console.log('Fetching WebChimera prebuilt for', capitalizeFirstLetter(runtime) + ':', '\nWebChimera version:', version, 
+            '\n' + capitalizeFirstLetter(runtime) + ' version:', runtimeVersion, '\nPlatform:', platform, '\nArch:', arch, '\nTarget dir:', targetDir);
 
         if (!(supported.runtimes.indexOf(runtime) > -1) || !(supported.platforms.indexOf(platform) > -1) || !(supported.arch.indexOf(arch) > -1))
             return reject('Unsupported runtime/arch/platform');
-
 
         resolve({
             runtime: {
@@ -164,7 +140,7 @@ function getJson(url) {
             json: true
         }, function(err, resp) {
             if (err || !resp.body)
-                return reject('something went very wrong: ' + (err || "no body!?!?!"));
+                return reject('Something went very wrong: ' + (err || "no body!?!?!"));
             resolve(resp.body)
         });
     })
@@ -172,9 +148,8 @@ function getJson(url) {
 
 parseEnv()
     .then(getWCJS)
-    .then(getVLC)
     .then(function() {
-        console.log('WCJS & VLC Libs Downloaded');
+        console.log('WebChimera with VLC Libs downloaded');
     })
     .catch(function(e) {
         console.log(e.message || e);
