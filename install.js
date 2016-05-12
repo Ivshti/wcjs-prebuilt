@@ -23,9 +23,14 @@ var rootdir = findProjectRoot(process.cwd(), {
     maxDepth: 12
 });
 
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 function getWCJS(data) {
     return new Promise(function(resolve, reject) {
         var wcjsUrl = 'https://api.github.com/repos/RSATom/WebChimera.js/releases/' + (data.version === 'latest' ? 'latest' : ('tags/' + data.version));
+        console.log('');
         console.log('Looking for WebChimera download at ' + wcjsUrl);
         console.log('');
         getJson(wcjsUrl)
@@ -104,7 +109,8 @@ function parseEnv() {
                 if (!process.env.WCJS_RUNTIME) runtime = 'nw.js';
             }
 
-        console.log('Fetching WebChimera prebuilt for', runtime, 'WebChimera version:', version, '\n' + runtime + 'version:', runtimeVersion, '\nPlatform:', platform, '\nArch:', arch);
+        console.log('Fetching WebChimera prebuilt for', runtime, '\nWebChimera version:', version, 
+            '\n' + capitalizeFirstLetter(runtime) + ' version:', runtimeVersion, '\nPlatform:', platform, '\nArch:', arch);
 
         if (!(supported.runtimes.indexOf(runtime) > -1) || !(supported.platforms.indexOf(platform) > -1) || !(supported.arch.indexOf(arch) > -1))
             return reject('Unsupported runtime/arch/platform');
