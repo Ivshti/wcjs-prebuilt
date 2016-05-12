@@ -115,7 +115,7 @@ function parseEnv() {
             }
 
         console.log('Fetching WebChimera prebuilt for', capitalizeFirstLetter(runtime) + ':', '\nWebChimera version:', version, 
-            '\n' + capitalizeFirstLetter(runtime) + ' version:', runtimeVersion, '\nPlatform:', platform, '\nArch:', arch, '\nTarget dir:', targetDir);
+            '\n' + capitalizeFirstLetter(runtime) + ' version:', runtimeVersion, '\nPlatform:', platform, '\nArch:', arch, '\nTarget dir:', path.resolve(targetDir));
 
         if (!(supported.runtimes.indexOf(runtime) > -1) || !(supported.platforms.indexOf(platform) > -1) || !(supported.arch.indexOf(arch) > -1))
             return reject('Unsupported runtime/arch/platform');
@@ -127,7 +127,7 @@ function parseEnv() {
                 arch: arch,
                 platform: platform
             },
-            dir: targetDir,
+            dir: path.resolve(targetDir),
             version: version
         });
     });
