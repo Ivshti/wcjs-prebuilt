@@ -1,4 +1,4 @@
-var fs = require('fs');
+var fs = require('fs-extra');
 var path = require('path');
 var Promise = require('bluebird');
 var needle = require('needle');
@@ -72,7 +72,15 @@ function getWCJS(data) {
                 }
 
                 console.log('Acquiring: ', candidate.name);
-
+                
+                try {
+                    stats = fs.lstatSync(data.dir);
+                    if (stats.isDirectory()) {
+                        fs.removeSync(data.dir);
+                    }
+                }
+                catch (e) { }
+                
                 downloader.downloadAndUnpack(data.dir, candidate.browser_download_url)
                     .then(function() {
                         resolve(data)
@@ -101,7 +109,6 @@ function parseEnv() {
         var version = process.env.WCJS_VERSION || inf.version || 'latest';
         var runtime = process.env.WCJS_RUNTIME || inf.runtime || 'electron';
         var runtimeVersion = process.env.WCJS_RUNTIME_VERSION || inf.runtime_version || 'latest';
-        var targetDir = process.env.WCJS_TARGET || inf.dir || './bin';
 
         mkdirp.sync(targetDir);
 
@@ -115,7 +122,7 @@ function parseEnv() {
             }
 
         console.log('Fetching WebChimera prebuilt for', capitalizeFirstLetter(runtime) + ':', '\nWebChimera version:', version, 
-            '\n' + capitalizeFirstLetter(runtime) + ' version:', runtimeVersion, '\nPlatform:', platform, '\nArch:', arch, '\nTarget dir:', path.resolve(targetDir));
+            '\n' + capitalizeFirstLetter(runtime) + ' version:', runtimeVersion, '\nPlatform:', platform, '\nArch:', arch);
 
         if (!(supported.runtimes.indexOf(runtime) > -1) || !(supported.platforms.indexOf(platform) > -1) || !(supported.arch.indexOf(arch) > -1))
             return reject('Unsupported runtime/arch/platform');
@@ -127,7 +134,7 @@ function parseEnv() {
                 arch: arch,
                 platform: platform
             },
-            dir: path.resolve(targetDir),
+            dir: './bin',
             version: version
         });
     });
