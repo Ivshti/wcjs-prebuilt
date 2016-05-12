@@ -5,7 +5,6 @@ var needle = require('needle');
 var _ = require('lodash');
 var downloader = require('./lib/downloader');
 var findProjectRoot = require('find-project-root');
-var mkdirp = require('mkdirp');
 var parsePath = require('parse-filepath');
 
 
@@ -73,15 +72,18 @@ function getWCJS(data) {
 
                 console.log('Acquiring: ', candidate.name);
                 
+                var dir = './bin';
                 try {
-                    stats = fs.lstatSync(data.dir);
+                    stats = fs.lstatSync(dir);
                     if (stats.isDirectory()) {
-                        fs.removeSync(data.dir);
+                        fs.removeSync(dir);
                     }
                 }
-                catch (e) { }
+                catch (e) { 
+                    fs.mkdir(dir);
+                }
                 
-                downloader.downloadAndUnpack(data.dir, candidate.browser_download_url)
+                downloader.downloadAndUnpack(dir, candidate.browser_download_url)
                     .then(function() {
                         resolve(data)
                     });
@@ -109,8 +111,7 @@ function parseEnv() {
         var version = process.env.WCJS_VERSION || inf.version || 'latest';
         var runtime = process.env.WCJS_RUNTIME || inf.runtime || 'electron';
         var runtimeVersion = process.env.WCJS_RUNTIME_VERSION || inf.runtime_version || 'latest';
-
-        mkdirp.sync(targetDir);
+        var targetDir = './bin';
 
         if (/^win/.test(platform))
             platform = 'win';
@@ -134,7 +135,6 @@ function parseEnv() {
                 arch: arch,
                 platform: platform
             },
-            dir: './bin',
             version: version
         });
     });

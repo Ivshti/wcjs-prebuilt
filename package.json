@@ -31,7 +31,6 @@
     "graceful-ncp": "^2.0.0",
     "gunzip-maybe": "^1.2.1",
     "lodash": "^3.10.1",
-    "mkdirp": "^0.5.1",
     "needle": "^0.10.0",
     "parse-filepath": "^0.6.3",
     "progress": "^1.1.8",
