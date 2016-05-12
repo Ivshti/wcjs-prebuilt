@@ -6,15 +6,9 @@ Install [WebChimera.js](http://github.com/RSATom/WebChimera.js) prebuilt binarie
 
 WebChimera.js is a node.js binding to libvlc. You can use it to play video using a JS raw array buffer drawn via WebGL.
 
-## Installation
-
-```
-npm install wcjs-prebuilt
-```
-
 ## Configuration
 
-The following elements can be configured:
+Before installing the package, you may need to configure a few things. Here's the list of configurable items:
   - Target architecture (supported: `ia32` / `x64`. Default value: machine's architecture)
   - Target platform (supported: `win` / `osx`. Default value: machine's platform)
   - Target runtime (supported: `electron` / `nw`. Default value: `electron`)
@@ -37,6 +31,13 @@ You'll generally want to configure at least the last 3 items. There are 2 ways y
     "version": "v0.2.4"
   }
   ```
+
+
+## Installation
+
+```
+npm install wcjs-prebuilt
+```
 
 ## Programmatic usage
 ```javascript
