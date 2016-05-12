@@ -43,7 +43,7 @@ function getWCJS(data) {
                 _.every(json.assets, function(asset) {
                     var assetParsed = path.parse(asset.name).name.replace('.tar', '').split('_');
                     
-                    if(asset.name.toLower().indexOf('vlc') == -1){
+                    if(asset.name.toLowerCase().indexOf('vlc') == -1){
                         console.log(asset.name, '\x1b[31m', 'doesn\'t include VLC','\x1b[0m');
                         return true;
                     }
