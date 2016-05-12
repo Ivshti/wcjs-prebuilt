@@ -1,11 +1,10 @@
-var fs = require('fs');
+var fs = require('fs-extra');
 var path = require('path');
 var Promise = require('bluebird');
 var needle = require('needle');
 var _ = require('lodash');
 var downloader = require('./lib/downloader');
 var findProjectRoot = require('find-project-root');
-var mkdirp = require('mkdirp');
 var parsePath = require('parse-filepath');
 
 
@@ -72,8 +71,19 @@ function getWCJS(data) {
                 }
 
                 console.log('Acquiring: ', candidate.name);
-
-                downloader.downloadAndUnpack(data.dir, candidate.browser_download_url)
+                
+                var dir = './bin';
+                try {
+                    stats = fs.lstatSync(dir);
+                    if (stats.isDirectory()) {
+                        fs.removeSync(dir);
+                    }
+                }
+                catch (e) { 
+                    fs.mkdir(dir);
+                }
+                
+                downloader.downloadAndUnpack(dir, candidate.browser_download_url)
                     .then(function() {
                         resolve(data)
                     });
@@ -101,9 +111,7 @@ function parseEnv() {
         var version = process.env.WCJS_VERSION || inf.version || 'latest';
         var runtime = process.env.WCJS_RUNTIME || inf.runtime || 'electron';
         var runtimeVersion = process.env.WCJS_RUNTIME_VERSION || inf.runtime_version || 'latest';
-        var targetDir = process.env.WCJS_TARGET || inf.dir || './bin';
-
-        mkdirp.sync(targetDir);
+        var targetDir = './bin';
 
         if (/^win/.test(platform))
             platform = 'win';
@@ -115,7 +123,7 @@ function parseEnv() {
             }
 
         console.log('Fetching WebChimera prebuilt for', capitalizeFirstLetter(runtime) + ':', '\nWebChimera version:', version, 
-            '\n' + capitalizeFirstLetter(runtime) + ' version:', runtimeVersion, '\nPlatform:', platform, '\nArch:', arch, '\nTarget dir:', targetDir);
+            '\n' + capitalizeFirstLetter(runtime) + ' version:', runtimeVersion, '\nPlatform:', platform, '\nArch:', arch);
 
         if (!(supported.runtimes.indexOf(runtime) > -1) || !(supported.platforms.indexOf(platform) > -1) || !(supported.arch.indexOf(arch) > -1))
             return reject('Unsupported runtime/arch/platform');
@@ -127,7 +135,6 @@ function parseEnv() {
                 arch: arch,
                 platform: platform
             },
-            dir: targetDir,
             version: version
         });
     });
@@ -149,6 +156,9 @@ function getJson(url) {
 parseEnv()
     .then(getWCJS)
     .then(function() {
+        // Hack: RSAtom's release includes a broken symlink that doesn't seem to be needed anyway
+        // Keeping it will break Electron builder - we remove it until RSAtom fixes the issue
+        fs.unlink('./bin/lib/vlc/lib/liblzma.5.dylib');
         console.log('WebChimera with VLC Libs downloaded');
     })
     .catch(function(e) {
