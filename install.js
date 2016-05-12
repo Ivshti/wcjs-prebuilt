@@ -26,7 +26,7 @@ var rootdir = findProjectRoot(process.cwd(), {
 function getWCJS(data) {
     return new Promise(function(resolve, reject) {
         var wcjsUrl = 'https://api.github.com/repos/RSATom/WebChimera.js/releases/' + (data.version === 'latest' ? 'latest' : ('tags/' + data.version));
-        console.log('Looking for WebChimera download at ' + wcjsUrl + ' for environment: ', data.runtime);
+        console.log('Looking for WebChimera download at ' + wcjsUrl + ' for environment: ' + JSON.stringify(data.runtime));
         getJson(wcjsUrl)
             .then(function(json) {
                 if (json.message === 'Not Found') {
@@ -43,8 +43,13 @@ function getWCJS(data) {
                         arch: assetParsed[6],
                         platform: assetParsed[7]
                     };
-                    if (_.isEqual(data.runtime, assetRuntime))
+                    if (_.isEqual(data.runtime, assetRuntime)){
                         candidate = asset;
+                        console.log('Analyzed ' + asset.name + ' (' + JSON.stringify(assetRuntime) + '): not matching')
+                    }
+                    else{
+                        console.log('Analyzed ' + asset.name + ' (' + JSON.stringify(assetRuntime) + '): matching')
+                    }
                 });
 
                 if (!candidate) {
