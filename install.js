@@ -26,7 +26,8 @@ var rootdir = findProjectRoot(process.cwd(), {
 function getWCJS(data) {
     return new Promise(function(resolve, reject) {
         var wcjsUrl = 'https://api.github.com/repos/RSATom/WebChimera.js/releases/' + (data.version === 'latest' ? 'latest' : ('tags/' + data.version));
-        console.log('Looking for WebChimera download at ' + wcjsUrl + ' for environment: ' + JSON.stringify(data.runtime));
+        console.log('Looking for WebChimera download at ' + wcjsUrl);
+        console.log('Trying to match environment: ' + JSON.stringify(data.runtime));
         getJson(wcjsUrl)
             .then(function(json) {
                 if (json.message === 'Not Found') {
@@ -35,7 +36,7 @@ function getWCJS(data) {
                 var candidate = null;
 
                 _.forEach(json.assets, function(asset) {
-                    var assetParsed = path.parse(asset.name).name.split('_');
+                    var assetParsed = path.parse(asset.name).name.replace('.tar', '').split('_');
 
                     var assetRuntime = {
                         type: assetParsed[2],
@@ -45,11 +46,12 @@ function getWCJS(data) {
                     };
                     if (_.isEqual(data.runtime, assetRuntime)){
                         candidate = asset;
-                        console.log('Analyzed ' + asset.name + ' (' + JSON.stringify(assetRuntime) + '): not matching')
+                        console.log('Analyzed ' + asset.name + ': matching');
                     }
                     else{
-                        console.log('Analyzed ' + asset.name + ' (' + JSON.stringify(assetRuntime) + '): matching')
+                        console.log('Analyzed ' + asset.name + ': not matching');
                     }
+                    console.log('(' + JSON.stringify(assetRuntime) + ')');
                 });
 
                 if (!candidate) {
