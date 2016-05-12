@@ -104,7 +104,7 @@ function parseEnv() {
                 if (!process.env.WCJS_RUNTIME) runtime = 'nw.js';
             }
 
-        console.log('Runtime detected as:', runtime, '\nArch:', arch)
+        console.log('Fetching WebChimera prebuilt for', runtime, 'WebChimera version:', version, '\n' + runtime + 'version:', runtimeVersion, '\nPlatform:', platform, '\nArch:', arch);
 
         if (!(supported.runtimes.indexOf(runtime) > -1) || !(supported.platforms.indexOf(platform) > -1) || !(supported.arch.indexOf(arch) > -1))
             return reject('Unsupported runtime/arch/platform');
