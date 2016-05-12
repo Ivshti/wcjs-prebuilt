@@ -46,11 +46,11 @@ function getWCJS(data) {
                     };
                     if (_.isEqual(data.runtime, assetRuntime)){
                         candidate = asset;
-                        console.log(asset.name + ': ', '\x1b[32m', 'matching environment' ,'\x1b[0m');
-                        return false;
+                        console.log(asset.name, '\x1b[32m', 'matching environment: ' + (data.version === 'latest' ? 'continuing for more recent release' : 'stopping the search'), '\x1b[0m');
+                        return data.version === 'latest';
                     }
                     else{
-                        console.log(asset.name + ': ', '\x1b[31m', 'not matching environment' ,'\x1b[0m');
+                        console.log(asset.name, '\x1b[31m', 'not matching environment' ,'\x1b[0m');
                         return true;
                     }
                 });
