@@ -22,7 +22,7 @@ There are 2 ways you can configure these elements this:
   ```
   WCJS_RUNTIME=electron WCJS_RUNTIME_VERSION=v0.37.8 WCJS_VERSION=v0.2.4 npm install wcjs-prebuilt
   ```
-  - By adding a `wcjs-prebuilt` hash to your root `package.json` and define the following keys: `arch`, `platform`, `runtime`, `runtimeVersion`, `version`, `targetDir`. Here's an example:
+  - By adding a `wcjs-prebuilt` hash to your root `package.json` and defining the following keys: `arch`, `platform`, `runtime`, `runtimeVersion`, `version`, `targetDir`. Here's an example:
   
   ```
   "wcjs-prebuilt": {
