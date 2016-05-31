@@ -153,9 +153,9 @@ parseEnv()
         // Keeping it will break Electron builder, so we remove it for now
         // TODO: remove these 2 lines when RSAtom fixes the issue
         var liblzmaPath = './bin/lib/vlc/lib/liblzma.5.dylib';
-        fs.stat(liblzmaPath, function(err, stat) {
+        fs.lstat(liblzmaPath, function(err, stat) {
             if(err == null) {
-                fs.unlink('./bin/lib/vlc/lib/liblzma.5.dylib');
+                fs.unlink(liblzmaPath);
             }
         });
         
