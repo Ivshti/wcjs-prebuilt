@@ -81,6 +81,69 @@ function getWCJS(data) {
     });
 }
 
+function cleanup() {
+    return new Promise(function(resolve, reject) {
+        // RSAtom's osx release includes a few files that cause problems
+        // with build libs like Electron builder, and that are not needed
+        // anyway so we can safely remove them:
+        //     - a broken symlink to liblzma.5.dylib
+        //       (Electron builder will break when trying to de-references it)
+        //     - a bunch of ._* files
+        //       (For some reason they cause codesigning problems)
+        var filesToRemove = [
+            './bin/lib/vlc/lib/liblzma.5.dylib',
+            './bin/lib/vlc/share/lua/playlist/._pluzz.luac',
+            './bin/lib/vlc/share/lua/playlist/._mpora.luac',
+            './bin/lib/vlc/share/lua/playlist/._liveleak.luac',
+            './bin/lib/vlc/share/lua/playlist/._youtube.luac',
+            './bin/lib/vlc/share/lua/playlist/._googlevideo.luac',
+            './bin/lib/vlc/share/lua/modules/._simplexml.luac',
+            './bin/lib/vlc/share/lua/playlist/._anevia_streams.luac',
+            './bin/lib/vlc/share/lua/playlist/._metacafe.luac',
+            './bin/lib/vlc/share/lua/playlist/._koreus.luac',
+            './bin/lib/vlc/share/lua/extensions/._VLSub.luac',
+            './bin/lib/vlc/share/lua/playlist/._joox.luac',
+            './bin/lib/vlc/share/lua/modules/._dkjson.luac',
+            './bin/lib/vlc/share/lua/modules/._common.luac',
+            './bin/lib/vlc/share/lua/playlist/._canalplus.luac',
+            './bin/lib/vlc/share/lua/playlist/._vimeo.luac',
+            './bin/lib/vlc/share/lua/playlist/._jamendo.luac',
+            './bin/lib/vlc/share/lua/playlist/._extreme.luac',
+            './bin/lib/vlc/share/lua/playlist/._metachannels.luac',
+            './bin/lib/vlc/share/lua/playlist/._appletrailers.luac',
+            './bin/lib/vlc/share/lua/playlist/._lelombrik.luac',
+            './bin/lib/vlc/share/lua/playlist/._katsomo.luac',
+            './bin/lib/vlc/share/lua/playlist/._soundcloud.luac',
+            './bin/lib/vlc/share/lua/playlist/._zapiks.luac',
+            './bin/lib/vlc/share/lua/playlist/._rockbox_fm_presets.luac',
+            './bin/lib/vlc/share/lua/modules/._sandbox.luac',
+            './bin/lib/vlc/share/lua/playlist/._bbc_co_uk.luac',
+            './bin/lib/vlc/share/lua/playlist/._anevia_xml.luac',
+            './bin/lib/vlc/share/lua/playlist/._cue.luac',
+            './bin/lib/vlc/share/lua/playlist/._youtube_homepage.luac',
+            './bin/lib/vlc/share/lua/playlist/._break.luac',
+            './bin/lib/vlc/share/lua/playlist/._pinkbike.luac',
+            './bin/lib/vlc/share/lua/playlist/._france2.luac',
+            './bin/lib/vlc/share/lua/playlist/._dailymotion.luac',
+            './bin/lib/vlc/plugins/._plugins.dat'
+        ];
+        var deleted = filesToRemove.map(function(path){
+            return new Promise(function(res, rej) {
+                fs.lstat(path, function(err, stat) {
+                    if(err == null) {
+                        fs.unlink(path);
+                        console.log("Cleaned up useless file:", path);
+                    }
+                    res();
+                })
+            })
+        })
+        Promise.all(deleted).then(function(){
+            resolve();
+        })
+    });
+}
+
 function parseEnv() {
     var supported = {
         runtimes: ['electron', 'nw'],
@@ -90,7 +153,7 @@ function parseEnv() {
 
     return new Promise(function(resolve, reject) {
         try {
-            var manifest = require(path.join(rootdir, "package.json"));
+            var manifest = require(path.join(rootdir, 'package.json'));
         } catch (e) {};
 
         var inf = (manifest && manifest['wcjs-prebuilt']) ? manifest['wcjs-prebuilt'] : {};
@@ -148,17 +211,8 @@ function getJson(url) {
 
 parseEnv()
     .then(getWCJS)
+    .then(cleanup)
     .then(function() {
-        // Hackish: RSAtom's osx release includes a broken symlink that doesn't seem to be needed anyway
-        // Keeping it will break Electron builder, so we remove it for now
-        // TODO: remove these 2 lines when RSAtom fixes the issue
-        var liblzmaPath = './bin/lib/vlc/lib/liblzma.5.dylib';
-        fs.lstat(liblzmaPath, function(err, stat) {
-            if(err == null) {
-                fs.unlink(liblzmaPath);
-            }
-        });
-        
         console.log('WebChimera with VLC Libs downloaded');
     })
     .catch(function(e) {
