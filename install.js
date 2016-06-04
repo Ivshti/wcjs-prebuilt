@@ -90,6 +90,8 @@ function cleanup() {
         //       (Electron builder will break when trying to de-references it)
         //     - a bunch of ._* files
         //       (For some reason they cause codesigning problems)
+        console.log('');
+        console.log('Cleaning up - now looking for useless files to remove...');
         var filesToRemove = [
             './bin/lib/vlc/lib/liblzma.5.dylib',
             './bin/lib/vlc/share/lua/playlist/._pluzz.luac',
@@ -132,13 +134,15 @@ function cleanup() {
                 fs.lstat(path, function(err, stat) {
                     if(err == null) {
                         fs.unlink(path);
-                        console.log("Cleaned up useless file:", path);
+                        console.log("Removed useless file:", path);
                     }
                     res();
                 })
             })
         })
         Promise.all(deleted).then(function(){
+            console.log('Done cleaning up.');
+            console.log('');
             resolve();
         })
     });
