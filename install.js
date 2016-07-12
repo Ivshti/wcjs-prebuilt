@@ -175,7 +175,7 @@ function parseEnv() {
             platform = 'win';
         else if (platform === 'darwin')
             platform = 'osx'
-        if (manifest)
+        if (manifest && manifest.main)
             if (parsePath(manifest.main).extname === '.html') {
                 if (!process.env.WCJS_RUNTIME && !inf.runtime) runtime = 'nw';
             }
